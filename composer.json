@@ -9,7 +9,7 @@
             "email": "olegstan@inbox.ru"
         }
     ],
-    "version": "1.1.1",
+    "version": "1.1.4",
     "homepage": "https://github.com/olegstan/laravel-rest",
     "require": {
         "php": ">=5.5.9"
@@ -24,13 +24,6 @@
     },
     "autoload-dev": {
 
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "Olegstan\\LaravelRest\\LaravelRestProvider"
-            ]
-        }
     },
     "config": {
         "sort-packages": true

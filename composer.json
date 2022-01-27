@@ -25,6 +25,13 @@
     "autoload-dev": {
 
     },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "LaravelRest\\LaravelRestProvider"
+            ]
+        }
+    },
     "config": {
         "sort-packages": true
     },

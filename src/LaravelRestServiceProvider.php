@@ -13,7 +13,9 @@ class LaravelRestServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-
+        Route::group(['prefix' => '/api/v1', 'middleware' => ['api.token']], function () {
+            Route::any('call/{target}/{method}', ['as' => 'api.v1.call', 'uses' => 'App\Api\V1\Controllers\IndexController@index']);
+        });
     }
 
     /**

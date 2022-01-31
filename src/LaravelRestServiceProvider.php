@@ -2,6 +2,7 @@
 
 namespace LaravelRest;
 
+use Route;
 use Illuminate\Support\ServiceProvider;
 
 class LaravelRestServiceProvider extends ServiceProvider

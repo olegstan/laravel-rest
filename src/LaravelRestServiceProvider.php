@@ -2,6 +2,9 @@
 
 namespace LaravelRest;
 
+use LaravelRest\Http\Controllers\IndexController;
+use LaravelRest\Http\Middleware\Token;
+use LaravelRest\Http\Requests\StartRequest;
 use Route;
 use Illuminate\Support\ServiceProvider;
 
@@ -14,8 +17,16 @@ class LaravelRestServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        $url = $_SERVER['REQUEST_URI'];
+        if(preg_match('(\/api\/v1\/)', $url) === 1)
+        {
+            $this->app->alias('request', StartRequest::class);
+        }
+
+        $this->app['router']->middleware('api.token', Token::class);
+
         Route::group(['prefix' => '/api/v1', 'middleware' => ['api.token']], function () {
-            Route::any('call/{target}/{method}', ['as' => 'api.v1.call', 'uses' => 'App\Api\V1\Controllers\IndexController@index']);
+            Route::any('call/{target}/{method}', ['as' => 'api.v1.call', 'uses' => IndexController::class . '@index']);
         });
     }
 

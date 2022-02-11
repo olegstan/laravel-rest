@@ -21,9 +21,4 @@ class Controller extends BaseController
     {
         $request->init();
     }
-
-    public function registerValidator()
-    {
-        return false;
-    }
 }

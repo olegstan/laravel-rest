@@ -5,7 +5,7 @@ namespace LaravelRest\Http\Controllers;
 use App\Api\V1\Helpers\ApiSession;
 use LaravelRest\Http\Requests\RequestInterface;
 use LaravelRest\Http\Requests\StartRequest;
-use App\Api\V1\Requests\Validators\ValidatorAble;
+use LaravelRest\Http\Validators\ValidatorAble;
 use App\Api\V1\Response\Response;
 use App\Api\V1\Transformers\TransformerAble;
 use App\Http\Controllers\Controller;

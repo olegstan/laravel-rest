@@ -23,11 +23,6 @@ class IndexController extends Controller
     public static $target = null;
     public static $method = null;
 
-    public function registerValidator()
-    {
-        return false;
-    }
-
     /**
      * @param $target
      * @param $method

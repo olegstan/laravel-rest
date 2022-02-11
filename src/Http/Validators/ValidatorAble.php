@@ -3,6 +3,7 @@
 namespace LaravelRest\Http\Validators;
 
 use Auth;
+use LaravelRest\Http\Controllers\IndexController;
 use Request;
 
 trait ValidatorAble
@@ -34,7 +35,7 @@ trait ValidatorAble
 	public function getValidateClass()
     {
         $str = '';
-        $arr = explode('-', parent::$method);
+        $arr = explode('-', IndexController::$method);
         foreach($arr as $k => $val)
         {
             $str .= ucfirst(camel_case($val));
@@ -42,6 +43,7 @@ trait ValidatorAble
 
         $key = strtolower(Request::method()) . $str;
         $validators = $this->validators;
+
 
         if (property_exists($this, 'defaultValidators') && is_array($this->defaultValidators)) {
             $validators = array_merge($this->defaultValidators, $validators);
@@ -57,13 +59,13 @@ trait ValidatorAble
             return $validateClass;
         }
 
-        $validateClass = self::$namespaceValidators . ucfirst(Auth::getPrefix()) . '\\' . ucfirst(parent::$target) . 'Request';
+        $validateClass = self::$namespaceValidators . ucfirst(Auth::getPrefix()) . '\\' . ucfirst(IndexController::$target) . 'Request';
 
         if (class_exists($validateClass)) {
             return $validateClass;
         }
 
-        $validateClass = 'App\Api\V1\Requests\Validators\Base\\' . ucfirst(parent::$target) . 'Request';
+        $validateClass = 'App\Api\V1\Requests\Validators\Base\\' . ucfirst(IndexController::$target) . 'Request';
         if (class_exists($validateClass)) {
             return $validateClass;
         }

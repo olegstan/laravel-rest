@@ -17,7 +17,7 @@ class LaravelRestServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $url = $_SERVER['REQUEST_URI'];
+        $url = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
         if(preg_match('(\/api\/v1\/)', $url) === 1)
         {
             $this->app->alias('request', StartRequest::class);

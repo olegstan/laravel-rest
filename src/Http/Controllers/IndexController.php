@@ -4,7 +4,6 @@ namespace LaravelRest\Http\Controllers;
 
 use LaravelRest\Http\Requests\RequestInterface;
 use LaravelRest\Http\Requests\StartRequest;
-use Illuminate\Routing\Controller;
 use Exception;
 use LaravelRest\Http\Response\ResponseTrait;
 use ReflectionException;

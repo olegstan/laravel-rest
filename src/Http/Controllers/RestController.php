@@ -6,10 +6,9 @@ use App\Api\V1\Helpers\ApiSession;
 use LaravelRest\Http\Requests\RequestInterface;
 use LaravelRest\Http\Requests\StartRequest;
 use LaravelRest\Http\Validators\ValidatorAble;
-use App\Api\V1\Response\Response;
-use App\Api\V1\Transformers\TransformerAble;
-use App\Http\Controllers\Controller;
-use App\Models\BaseModel;
+use LaravelRest\Http\Response\Response;
+use LaravelRest\Http\Transformers\TransformerAble;
+use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 use DB;
 use Exception;
@@ -33,7 +32,7 @@ abstract class RestController extends Controller
      */
     public $sofDelete = null;
     /**
-     * @var \App\Models\BaseModel
+     * @var Model
      */
     public $model = null;
     /**

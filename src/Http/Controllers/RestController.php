@@ -17,7 +17,7 @@ use Illuminate\Http\Request;
 
 /**
  * Class RestController
- * @package App\Api\V1\Controllers
+ * @package LaravelRest\Http\Controllers
  */
 abstract class RestController extends Controller
 {

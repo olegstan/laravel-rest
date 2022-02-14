@@ -10,7 +10,7 @@ use Session;
 
 /**
  * Class ResponseFactory
- * @package App\Api\V1\Response
+ * @package LaravelRest\Http\Response
  */
 class ResponseFactory
 {

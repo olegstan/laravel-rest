@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
  * Class StartRequest
- * @package App\Api\V1\Requests
+ * @package LaravelRest\Http\Requests
  */
 class StartRequest extends Request implements RequestInterface
 {

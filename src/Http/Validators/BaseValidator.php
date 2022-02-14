@@ -9,7 +9,7 @@ use Validator;
 
 /**
  * Class BaseValidator
- * @package App\Api\V1\Requests\Validators
+ * @package LaravelRest\Http\Validators
  */
 class BaseValidator
 {

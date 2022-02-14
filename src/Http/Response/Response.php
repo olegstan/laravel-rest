@@ -10,7 +10,7 @@ use Illuminate\Support\Collection;
 
 /**
  * Class Response
- * @package App\Api\V1\Response
+ * @package LaravelRest\Http\Response
  */
 class Response extends IlluminateResponse
 {

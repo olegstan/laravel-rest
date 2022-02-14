@@ -14,7 +14,7 @@ use Session;
 
 /**
  * Class IndexController
- * @package App\Api\V1\Controllers
+ * @package LaravelRest\Http\Controllers
  */
 class IndexController extends Controller
 {

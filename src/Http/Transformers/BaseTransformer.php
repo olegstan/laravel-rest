@@ -126,7 +126,7 @@ class BaseTransformer extends TransformerAbstract
     {
 		$role = Auth::getRole();
 
-        $str = __NAMESPACE__ . '\\'.ucfirst($role).'\\' . $name . 'Transformer';
+        $str = 'App\\Api\\V1\\Transformers\\'.ucfirst($role).'\\' . $name . 'Transformer';
 
 
 		if(class_exists($str))
@@ -134,13 +134,13 @@ class BaseTransformer extends TransformerAbstract
 			return $str;
 		}
 
-		$str = __NAMESPACE__ . '\Base\\' . $name . 'Transformer';
+		$str = 'App\\Api\\V1\\Transformers\\Base\\' . $name . 'Transformer';
 
 		if(class_exists($str))
 		{
 			return $str;
 		}
 
-		return __NAMESPACE__ . '\Base\\' . $name . 'Transformer';
+		return 'App\\Api\\V1\\Transformers\\Base\\' . $name . 'Transformer';
 	}
 }

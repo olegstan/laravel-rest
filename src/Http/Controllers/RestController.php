@@ -48,10 +48,6 @@ abstract class RestController extends Controller
      */
     public $modelTableAlias = false;
     /**
-     * @var string
-     */
-    public $transformer = '';
-    /**
      * @var int
      */
     public $perPage = 25;
@@ -165,7 +161,6 @@ abstract class RestController extends Controller
 
             $this->setPerPage($request->get('perPage'));
             $this->setSoftDeletes();
-            $this->registerTransformer();
             $this->queryBuild = $request->getQuery();
 
             $this->modelQuery = $this->modelName::query();
@@ -514,23 +509,22 @@ abstract class RestController extends Controller
 
     /**
      * @param $paginate
-     * @param bool $withTransform
      * @return Response
      */
-    public function responseIndex($paginate, $withTransform = true)
+    public function responseIndex($paginate)
     {
         switch ($paginate) {
             case 'all':
 //                if (!$this->modelQuery->getQuery()->limit || $this->modelQuery->getQuery()->limit > 200)
 //                    $this->modelQuery->limit(1500);//TODO
 
-                return $this->response()->collection($this->modelQuery->get(), new $this->transformer);
+                return $this->response()->collection($this->modelQuery->get());
             case 'first':
-                return $this->response()->item($this->modelQuery->first(), new $this->transformer);
+                return $this->response()->item($this->modelQuery->first());
             case 'paginate':
             default:
                 return $this->response()
-                    ->paginator($this->modelQuery->paginate($this->perPage), $withTransform ? new $this->transformer : false)//->addMeta('cache_key', $this->getCacheKey())
+                    ->paginator($this->modelQuery->paginate($this->perPage))//->addMeta('cache_key', $this->getCacheKey())
                     ;
 
         }

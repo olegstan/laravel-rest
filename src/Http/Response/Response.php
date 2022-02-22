@@ -6,6 +6,7 @@ use App\Api\V1\Transformers\Base\CreditLogTransformer;
 use App\Models\CreditLog;
 use Illuminate\Http\Response as IlluminateResponse;
 use Illuminate\Support\Collection;
+use LaravelRest\Http\Transformers\BaseTransformer;
 
 
 /**
@@ -107,6 +108,13 @@ class Response extends IlluminateResponse
                     {
                         return static::$transformer->transform($value);
                     });
+                }else{
+                    $this->transformData->transform(function ($value)
+                    {
+                        $transformerModel = BaseTransformer::getTransformClass(BaseTransformer::getClass($value, 'App\Models\\'));
+
+                        return (new $transformerModel)->transform($value);
+                    });
                 }
                 break;
             case 'collect':
@@ -116,18 +124,34 @@ class Response extends IlluminateResponse
                     {
                         return static::$transformer->transform($value);
                     });
+                }else{
+                    $this->transformData->transform(function ($value)
+                    {
+                        $transformerModel = BaseTransformer::getTransformClass(BaseTransformer::getClass($value, 'App\Models\\'));
+
+                        return (new $transformerModel)->transform($value);
+                    });
                 }
                 break;
             case 'item':
-                if ($this->transformData)
+                if (static::$transformer)
                 {
-                    if (static::$transformer)
+                    if ($this->transformData)
                     {
                         $this->transformData = static::$transformer->transform($this->transformData);
+                    } else {
+                        $this->transformData = [];
                     }
-                } else
-                {
-                    $this->transformData = [];
+                }else{
+                    if ($this->transformData)
+                    {
+                        $transformerModel = BaseTransformer::getTransformClass(BaseTransformer::getClass($this->transformData, 'App\Models\\'));
+
+                        $this->transformData = (new $transformerModel)->transform($this->transformData);
+                    } else
+                    {
+                        $this->transformData = [];
+                    }
                 }
                 break;
         }

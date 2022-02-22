@@ -20,7 +20,7 @@ class ResponseFactory
      * @param array $headers
      * @return Response
      */
-    public function collection(Collection $collection, $transformer, $headers = [])
+    public function collection(Collection $collection, $transformer = null, $headers = [])
     {
         return new Response($collection, 200, $headers, $transformer, 'collect');
     }
@@ -31,7 +31,7 @@ class ResponseFactory
      * @param array $headers
      * @return Response
      */
-    public function paginator(Paginator $paginator, $transformer, $headers = [])
+    public function paginator(Paginator $paginator, $transformer = null, $headers = [])
     {
         return new Response($paginator, 200, $headers, $transformer, 'paginator');
     }
@@ -42,7 +42,7 @@ class ResponseFactory
      * @param array $headers
      * @return Response
      */
-    public function item($item, $transformer, $headers = [])
+    public function item($item, $transformer = null, $headers = [])
     {
         return new Response($item, 200, $headers, $transformer, 'item');
     }

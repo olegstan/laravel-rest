@@ -57,7 +57,7 @@ class BaseTransformer extends TransformerAbstract
      * @param Model $model
      * @return mixed
      */
-    public function withRelations($transformed, $model)
+    public function withRelations(&$transformed, $model)
     {
 		$relations = $model->getRelations();
 		if(count($this->withOnly) > 0)
@@ -93,7 +93,6 @@ class BaseTransformer extends TransformerAbstract
 				}
 			}
 		}
-
 
 		return $transformed;
     }

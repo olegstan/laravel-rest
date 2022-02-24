@@ -104,12 +104,12 @@ class Response extends IlluminateResponse
             case 'paginator':
                 if (static::$transformer)
                 {
-                    $this->transformData->getCollection()->transform(function ($value)
+                    $this->transformData->getCollection()->transform(static function ($value)
                     {
                         return static::$transformer->transform($value);
                     });
                 }else{
-                    $this->transformData->transform(function ($value)
+                    $this->transformData->transform(static function ($value)
                     {
                         $transformerModel = BaseTransformer::getTransformClass(BaseTransformer::getClass($value, 'App\Models\\'));
 
@@ -120,12 +120,31 @@ class Response extends IlluminateResponse
             case 'collect':
                 if (static::$transformer)
                 {
-                    $this->transformData->transform(function ($value)
+                    $this->transformData->transform(static function ($value)
                     {
                         return static::$transformer->transform($value);
                     });
                 }else{
-                    $this->transformData->transform(function ($value)
+                    $this->transformData->transform(static function ($value)
+                    {
+                        $transformerModel = BaseTransformer::getTransformClass(BaseTransformer::getClass($value, 'App\Models\\'));
+
+                        return (new $transformerModel)->transform($value);
+                    });
+                }
+                break;
+            case 'collectOptimize':
+
+                if (static::$transformer)
+                {
+                    $this->transformData->transform(static function ($value)
+                    {
+                        return static::$transformer->transform($value);
+                    });
+
+
+                }else{
+                    $this->transformData->transform(static function ($value)
                     {
                         $transformerModel = BaseTransformer::getTransformClass(BaseTransformer::getClass($value, 'App\Models\\'));
 

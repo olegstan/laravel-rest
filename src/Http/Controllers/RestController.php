@@ -519,6 +519,8 @@ abstract class RestController extends Controller
 //                    $this->modelQuery->limit(1500);//TODO
 
                 return $this->response()->collection($this->modelQuery->get());
+            case 'allOptimize':
+                return $this->response()->collectOptimize($this->modelQuery->get());
             case 'first':
                 return $this->response()->item($this->modelQuery->first());
             case 'paginate':

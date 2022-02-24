@@ -27,6 +27,11 @@ class BaseTransformer extends TransformerAbstract
 	public $fields = [];
 
     /**
+     * @var array
+     */
+	public static $found = [];
+
+    /**
      * @param Model $model
      * @return mixed
      */
@@ -124,13 +129,19 @@ class BaseTransformer extends TransformerAbstract
      */
 	public static function getTransformClass($name)
     {
+        if(isset(BaseTransformer::$found[$name]))
+        {
+            return BaseTransformer::$found[$name];
+        }
+
 		$role = Auth::getRole();
 
         $str = 'App\\Api\\V1\\Transformers\\'.ucfirst($role).'\\' . $name . 'Transformer';
 
-
 		if(class_exists($str))
 		{
+            BaseTransformer::$found[$name] = $str;
+
 			return $str;
 		}
 
@@ -138,9 +149,15 @@ class BaseTransformer extends TransformerAbstract
 
 		if(class_exists($str))
 		{
+            BaseTransformer::$found[$name] = $str;
+
 			return $str;
 		}
 
-		return 'App\\Api\\V1\\Transformers\\Base\\' . $name . 'Transformer';
+        $str = 'App\\Api\\V1\\Transformers\\Base\\' . $name . 'Transformer';
+
+        BaseTransformer::$found[$name] = $str;
+
+		return $str;
 	}
 }

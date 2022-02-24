@@ -20,6 +20,16 @@ class ResponseFactory
      * @param array $headers
      * @return Response
      */
+    public function collectOptimize(Collection $collection, $transformer = null, $headers = [])
+    {
+        return new Response($collection, 200, $headers, $transformer, 'collectOptimize');
+    }
+    /**
+     * @param Collection $collection
+     * @param $transformer
+     * @param array $headers
+     * @return Response
+     */
     public function collection(Collection $collection, $transformer = null, $headers = [])
     {
         return new Response($collection, 200, $headers, $transformer, 'collect');

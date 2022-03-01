@@ -59,11 +59,12 @@ class ResponseFactory
 
     /**
      * @param array $data
+     * @param array $headers
      * @return Response
      */
-    public function json(array $data)
+    public function json(array $data, $headers = [])
     {
-		return new Response($data);
+		return new Response($data, 200, $headers);
 	}
 
     /**

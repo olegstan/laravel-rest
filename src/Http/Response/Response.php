@@ -19,10 +19,6 @@ class Response extends IlluminateResponse
      * @var
      */
     protected static $transformer;
-    /**
-     * @var Collection|null
-     */
-    public static $logs = null;
 
     /**
      * @var string
@@ -47,10 +43,6 @@ class Response extends IlluminateResponse
      * @var
      */
     protected $transformLogsData;
-    /**
-     * @var
-     */
-    protected $transformLogsIds = [];
 
     /**
      * Response constructor.
@@ -177,60 +169,9 @@ class Response extends IlluminateResponse
         $arr['meta'] = [];
         $arr['result'] = $this->result;
         $arr['data'] = is_array($this->transformData) ? $this->transformData : $this->transformData->toArray();
-
-        if(CreditLog::$isUpdated)
-        {
-            foreach (CreditLog::$userIds as $userId)
-            {
-                CreditLog::clearTransferLogs($userId);
-                CreditLog::recalculateAccountsBalance($userId);
-            }
-        }
-
-        $arr['logs'] = $this->transformLogs();
         $this->setMeta($arr);
         $this->content = json_encode($arr);
         return $this;
-    }
-
-    /**
-     * @param $log
-     */
-    public static function addLog($log)
-    {
-        if (is_null(static::$logs))
-        {
-            static::$logs = new Collection();
-        }
-
-        if($log)
-        {
-            static::$logs->push($log);
-        }
-    }
-
-    /**
-     * @return array|Collection
-     */
-    public function transformLogs()
-    {
-        if (is_null(static::$logs))
-        {
-            return [];
-        }
-
-        static::$logs->transform(function ($value)
-        {
-            if(!in_array($value->id, $this->transformLogsIds))
-            {
-                $this->transformLogsIds[] = $value->id;
-                $this->transformLogsData[] = (new CreditLogTransformer())->transform($value);
-            }
-
-            return $value;
-        });
-
-        return $this->transformLogsData;
     }
 
     /**

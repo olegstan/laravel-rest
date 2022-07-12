@@ -2,11 +2,8 @@
 
 namespace LaravelRest\Http\Response;
 
-use App;
-use Auth;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Collection;
-use Session;
 
 /**
  * Class ResponseFactory
@@ -22,7 +19,8 @@ class ResponseFactory
      */
     public function collectOptimize(Collection $collection, $transformer = null, $headers = [])
     {
-        return new Response($collection, 200, $headers, $transformer, 'collectOptimize');
+        $responseClass = config('rest.response');
+        return new $responseClass($collection, 200, $headers, $transformer, 'collectOptimize');
     }
     /**
      * @param Collection $collection
@@ -32,7 +30,8 @@ class ResponseFactory
      */
     public function collection(Collection $collection, $transformer = null, $headers = [])
     {
-        return new Response($collection, 200, $headers, $transformer, 'collect');
+        $responseClass = config('rest.response');
+        return new $responseClass($collection, 200, $headers, $transformer, 'collect');
     }
 
     /**
@@ -43,7 +42,8 @@ class ResponseFactory
      */
     public function paginator(Paginator $paginator, $transformer = null, $headers = [])
     {
-        return new Response($paginator, 200, $headers, $transformer, 'paginator');
+        $responseClass = config('rest.response');
+        return new $responseClass($paginator, 200, $headers, $transformer, 'paginator');
     }
 
     /**
@@ -54,7 +54,8 @@ class ResponseFactory
      */
     public function item($item, $transformer = null, $headers = [])
     {
-        return new Response($item, 200, $headers, $transformer, 'item');
+        $responseClass = config('rest.response');
+        return new $responseClass($item, 200, $headers, $transformer, 'item');
     }
 
     /**
@@ -64,15 +65,18 @@ class ResponseFactory
      */
     public function json(array $data, $headers = [])
     {
-		return new Response($data, 200, $headers);
+        $responseClass = config('rest.response');
+		return new $responseClass($data, 200, $headers);
 	}
 
     /**
      * @param string $text
      * @return Response
      */
-    public function success($text = ''){
-		$response = new Response([]);
+    public function success($text = '')
+    {
+        $responseClass = config('rest.response');
+		$response = new $responseClass([]);
 		if(!empty($text)){
 			$response->addMeta('text', $text);
 		}
@@ -89,7 +93,8 @@ class ResponseFactory
      */
     public function error($errors = null, $code = 422, $context = '', $data = [])
     {
-		$response = new Response([]);
+        $responseClass = config('rest.response');
+        $response = new $responseClass([]);
 		$response->error($code);
 		if($errors){
 			if(gettype($errors) == 'array' || gettype($errors) == 'object'){

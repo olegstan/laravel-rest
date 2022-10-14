@@ -126,6 +126,8 @@ abstract class RestController extends Controller
         'orWhereDate',
         'whereYear',
         'orWhereYear',
+        'whereMonth',
+        'orWhereMonth',
         'whereIncomeType',
         'whereSalaryType',
         'whereSpendingType',
@@ -233,6 +235,8 @@ abstract class RestController extends Controller
                 'orWhereDate',
                 'whereYear',
                 'orWhereYear',
+                'whereMonth',
+                'orWhereMonth',
             ])) {
                 $arrWhere[] = $subQuery;
             } else {

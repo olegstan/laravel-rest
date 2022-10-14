@@ -102,6 +102,7 @@ abstract class RestController extends Controller
         'select',
         'where',
         'has',
+        'whereAbs',
         'whereIn',
         'whereNotIn',
         'whereHas',
@@ -122,6 +123,7 @@ abstract class RestController extends Controller
         'having',
 
         'owner',
+        'whereAbs',
         'whereDate',
         'orWhereDate',
         'whereYear',
@@ -287,7 +289,11 @@ abstract class RestController extends Controller
             $this->prepareWhereHas($j, $subQuery);
             return;
         }else if ($key === 'whereDoesntHave') {
+
             $this->prepareWhereDoesntHave($j, $subQuery);
+            return;
+        }else if ($key === 'whereAbs') {
+            $this->prepareWhereAbs($j, $subQuery);
             return;
         }else if ($key === 'with') {
             $args = $this->prepareWith($subQuery);
@@ -382,6 +388,18 @@ abstract class RestController extends Controller
             {
                 $j->whereDoesntHave($query);
             }
+        }
+    }
+
+    /**
+     * @param $j
+     * @param $whereAbsQuery
+     */
+    protected function prepareWhereAbs($j, &$whereAbsQuery)
+    {
+        if (isset($whereAbsQuery['whereAbs'][0]) && isset($whereAbsQuery['whereAbs'][1]) && isset($whereAbsQuery['whereAbs'][2])) {
+
+            $j->whereAbs($whereAbsQuery['whereAbs'][0], $whereAbsQuery['whereAbs'][1], $whereAbsQuery['whereAbs'][2]);
         }
     }
 

@@ -231,4 +231,13 @@ class StartRequest extends Request implements RequestInterface
     {
         return $this->request->get('api_token');
     }
+
+    /**
+     * @param $key
+     * @return mixed
+     */
+    public function getHeader($key)
+    {
+        return $this->request->getHeader($key);
+    }
 }

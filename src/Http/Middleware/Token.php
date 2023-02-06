@@ -22,6 +22,11 @@ class Token
     {
         $token = method_exists($request,'getApiToken') ? $request->getApiToken() : $request->get('api_token');
 
+        if(empty($token))
+        {
+            $token = $request->header('ApiToken');
+        }
+
 
         /**
          * @var StartRequest $request

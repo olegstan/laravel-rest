@@ -24,7 +24,7 @@ class Token
 
         if(empty($token))
         {
-            $token = $request->header('ApiToken');
+            $token = $request->header('Authorization');
         }
 
 

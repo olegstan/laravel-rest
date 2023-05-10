@@ -121,7 +121,6 @@ abstract class RestController extends Controller
         'limit',
         'distinct',
         'having',
-
         'owner',
         'whereAbs',
         'whereDate',

@@ -130,14 +130,6 @@ abstract class RestController extends Controller
         'orWhereYear',
         'whereMonth',
         'orWhereMonth',
-        'whereIncomeType',
-        'whereSalaryType',
-        'whereSpendingType',
-        'whereObligationType',
-        'wherePropertyType',
-        'whereInvestType',
-        'whereCurrencyType',
-        'whereAccountType'
     ];
 
     /**
@@ -176,6 +168,14 @@ abstract class RestController extends Controller
             $this->softDeleteCondition($request);
             $this->defaultOrderBy($request);
         }
+    }
+
+    /**
+     * @return array|string[]
+     */
+    public function getBuilderAvailableMethod()
+    {
+        return $this->builderAvailableMethod;
     }
 
     /**

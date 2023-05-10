@@ -444,7 +444,7 @@ abstract class RestController extends Controller
      */
     protected function queryCheckAvailable($funcName)
     {
-        if (array_search($funcName, $this->builderAvailableMethod) === false)
+        if (array_search($funcName, $this->getBuilderAvailableMethod()) === false)
         {
             throw new Exception('Недоступный метод ' . $funcName);
         }

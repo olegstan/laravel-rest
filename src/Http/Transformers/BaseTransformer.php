@@ -49,6 +49,7 @@ class BaseTransformer extends TransformerAbstract
 				}
 			}
 		}
+
 		return $this->withRelations($arr, $model);
 	}
 
@@ -64,29 +65,45 @@ class BaseTransformer extends TransformerAbstract
 		{
 			$relations = Arr::only($relations, $this->withOnly);
 		}
+
 		unset($relations['pivot']);
 		foreach($relations as $key => $value)
 		{
-			if($value && Str::is('*Collection', get_class($value))){
-				$first = $value->first();
-				if($first){
-					$name = self::getClass($first, 'App\Models\\');
-					$transformName = self::getTransformClass($name);
-					$transform = new $transformName();
-					$transformed[$key] = [];
+			if($value && Str::is('*Collection', get_class($value))) {
+                $first = $value->first();
+                if ($first) {
+                    $name = self::getClass($first, 'App\Models\\');
+                    $transformName = self::getTransformClass($name);
+                    $transform = new $transformName();
+                    $transformed[$key] = [];
 
-					foreach($value as $v)
-					{
-						$transformed[$key][] = $transform->transform($v);
-					}
-				}else{
-					$transformed[$key] = [];
-				}
+                    foreach ($value as $v) {
+                        $transformed[$key][] = $transform->transform($v);
+                    }
+                } else {
+                    $transformed[$key] = [];
+                }
+            }elseif ($value && Str::is('Common\Models*', get_class($value))) {
+                $first = $value->first();
+                if ($first) {
+                    $name = self::getClass($first, 'Common\Models\\');
+                    $transformName = 'Common\\Transformers\\'.str_replace('_', '', ucfirst($name)).'Transformer';
+                    BaseTransformer::$found[$name] = $transformName;
+                    $transform = new $transformName();
+                    $transformed[$key] = [];
+
+//                    foreach ($value as $v) {
+                        $transformed[$key][] = $transform->transform($value);
+//                    }
+                } else {
+                    $transformed[$key] = [];
+                }
 			}else{
 				if($value){
 					$name = self::getClass($value, 'App\Models\\');
 					$transformName = self::getTransformClass($name);
-					$transform = new $transformName();
+                    $transform = new $transformName();
+
 					$transformed[$key] = $transform->transform($value);
 				}else{
 					$transformed[$key] = null;
@@ -126,8 +143,13 @@ class BaseTransformer extends TransformerAbstract
      * @param $name
      * @return string
      */
-	public static function getTransformClass($name)
+	public static function getTransformClass($name, $library = false)
     {
+        if ($library) 
+        {
+            return 'Common\\Transformers\\' . $name . 'Transformer';
+        }
+        
         if(isset(BaseTransformer::$found[$name]))
         {
             return BaseTransformer::$found[$name];

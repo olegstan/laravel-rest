@@ -2,7 +2,6 @@
 
 namespace LaravelRest\Http\Controllers;
 
-use App\Api\V1\Helpers\ApiSession;
 use LaravelRest\Http\Requests\RequestInterface;
 use LaravelRest\Http\Requests\StartRequest;
 use LaravelRest\Http\Validators\ValidatorAble;
@@ -186,14 +185,14 @@ abstract class RestController extends Controller
     {
         if (is_null($perPage))
         {
-            if (ApiSession::has('perPage')) {
-                $allowValues = [10, 15, 20, 25];
-                $value = ApiSession::getInt('perPage');
-
-                if (in_array($value, $allowValues)) {
-                    $this->perPage = $value;
-                }
-            }
+//            if (ApiSession::has('perPage')) {
+//                $allowValues = [10, 15, 20, 25];
+//                $value = ApiSession::getInt('perPage');
+//
+//                if (in_array($value, $allowValues)) {
+//                    $this->perPage = $value;
+//                }
+//            }
 
             return $this;
         }

@@ -18,7 +18,7 @@ class LaravelRestServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__ . '/publish/Api' => public_path() . '/../app',
+            __DIR__ . '/publish' => public_path() . '/../app',
             __DIR__ . '/config' => public_path() . '/../config',
         ], 'public');
 

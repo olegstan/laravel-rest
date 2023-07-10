@@ -17,6 +17,12 @@ class LaravelRestServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        $this->publishes([
+            __DIR__ . '/publish/Api' => public_path() . '/../app',
+            __DIR__ . '/config' => public_path() . '/../config',
+        ], 'public');
+
+
         $url = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
         if(preg_match('(\/api\/v1\/)', $url) === 1)
         {

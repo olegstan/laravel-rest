@@ -12,46 +12,46 @@ class BaseTransformer extends TransformerAbstract
     /**
      * @var array
      */
-	public $register = [];
+    public $register = [];
     /**
      * @var array
      */
-	public $registerForce = [];
+    public $registerForce = [];
     /**
      * @var array
      */
-	public $withOnly = [];
+    public $withOnly = [];
     /**
      * @var array
      */
-	public $fields = [];
+    public $fields = [];
 
     /**
      * @var array
      */
-	public static $found = [];
+    public static $found = [];
 
     /**
      * @param Model $model
      * @return mixed
      */
-	public function transform($model)
+    public function transform($model)
     {
-		$this->registerAttributes($model);
-		$arr = [];
-		foreach($this->fields as &$value)
-		{
-			if(isset($this->registerForce[$value])){
-				$arr[$value] = $this->registerForce[$value];
-			}else{
-				if($model->hasAttribute($value)){
-					$arr[$value] = isset($this->register[$value]) ? $this->register[$value] : $model->{$value};
-				}
-			}
-		}
+        $this->registerAttributes($model);
+        $arr = [];
+        foreach($this->fields as &$value)
+        {
+            if(isset($this->registerForce[$value])){
+                $arr[$value] = $this->registerForce[$value];
+            }else{
+                if($model->hasAttribute($value)){
+                    $arr[$value] = isset($this->register[$value]) ? $this->register[$value] : $model->{$value};
+                }
+            }
+        }
 
-		return $this->withRelations($arr, $model);
-	}
+        return $this->withRelations($arr, $model);
+    }
 
     /**
      * @param $transformed
@@ -60,58 +60,33 @@ class BaseTransformer extends TransformerAbstract
      */
     public function withRelations(&$transformed, $model)
     {
-		$relations = $model->getRelations();
-		if(count($this->withOnly) > 0)
-		{
-			$relations = Arr::only($relations, $this->withOnly);
-		}
+        $relations = $model->getRelations();
+        if(count($this->withOnly) > 0)
+        {
+            $relations = Arr::only($relations, $this->withOnly);
+        }
 
-		unset($relations['pivot']);
-		foreach($relations as $key => $value)
-		{
-			if($value && Str::is('*Collection', get_class($value))) {
+        unset($relations['pivot']);
+        foreach($relations as $key => $value)
+        {
+            if($value && Str::is('*Collection', get_class($value)))
+            {
+                $first = $value->first();
+                if ($first) {
+                    $name = self::getClass($first, self::getPrefix($value));
+                    $transformName = self::getTransformClass($name);
+                    $transform = new $transformName();
+                    $transformed[$key] = [];
 
-			    if(Str::is('Common\Models*', get_class($value)))
-			    {
-                    $first = $value->first();
-                    if ($first) {
-                        $name = self::getClass($first, 'Common\Models\\');
-                        $transformName = 'Common\\Transformers\\'.str_replace('_', '', ucfirst($name)).'Transformer';
-                        BaseTransformer::$found[$name] = $transformName;
-                        $transform = new $transformName();
-                        $transformed[$key] = [];
-
-                        foreach ($value as $v) {
-                            $transformed[$key][] = $transform->transform($v);
-                        }
-                    } else {
-                        $transformed[$key] = [];
+                    foreach ($value as $v) {
+                        $transformed[$key][] = $transform->transform($v);
                     }
-                }else{
-                    $first = $value->first();
-                    if ($first) {
-                        $name = self::getClass($first, 'App\Models\\');
-                        $transformName = self::getTransformClass($name);
-                        $transform = new $transformName();
-                        $transformed[$key] = [];
-
-                        foreach ($value as $v) {
-                            $transformed[$key][] = $transform->transform($v);
-                        }
-                    } else {
-                        $transformed[$key] = [];
-                    }
+                } else {
+                    $transformed[$key] = [];
                 }
             }else{
-                if($value && Str::is('Common\Models*', get_class($value)))
-                {
-                    $name = self::getClass($value, 'Common\Models\\');
-                    $transformName = 'Common\\Transformers\\'.str_replace('_', '', ucfirst($name)).'Transformer';
-                    $transform = new $transformName();
-
-                    $transformed[$key] = $transform->transform($value);
-                }else if($value){
-                    $name = self::getClass($value, 'App\Models\\');
+                if($value){
+                    $name = self::getClass($value, self::getPrefix($value));
                     $transformName = self::getTransformClass($name);
                     $transform = new $transformName();
 
@@ -119,10 +94,10 @@ class BaseTransformer extends TransformerAbstract
                 }else{
                     $transformed[$key] = null;
                 }
-			}
-		}
+            }
+        }
 
-		return $transformed;
+        return $transformed;
     }
 
     /**
@@ -143,53 +118,67 @@ class BaseTransformer extends TransformerAbstract
     }
 
     /**
+     * @param $value
+     * @return string
+     */
+    public static function getPrefix($value)
+    {
+        if(Str::is('Common\Models*', get_class($value)))
+        {
+            return 'Common\Models\\';
+        }
+
+        return 'App\Models\\';
+    }
+
+    /**
      * @param $model
      */
-	public function registerAttributes($model)
+    public function registerAttributes($model)
     {
 
-	}
+    }
 
     /**
      * @param $name
      * @return string
      */
-	public static function getTransformClass($name, $library = false)
+    public static function getTransformClass($name, $library = false)
     {
-        if ($library) 
+        if (Str::is('Common\Models*', $name))
         {
             return 'Common\\Transformers\\' . $name . 'Transformer';
         }
-        
+
         if(isset(BaseTransformer::$found[$name]))
         {
             return BaseTransformer::$found[$name];
         }
 
-		$role = Auth::getRole();
+        $role = Auth::getRole();
 
         $str = 'App\\Api\\V1\\Transformers\\'.ucfirst($role).'\\' . $name . 'Transformer';
 
-		if(class_exists($str))
-		{
+        if(class_exists($str))
+        {
             BaseTransformer::$found[$name] = $str;
 
-			return $str;
-		}
+            return $str;
+        }
 
-		$str = 'App\\Api\\V1\\Transformers\\Base\\' . $name . 'Transformer';
+        $str = 'App\\Api\\V1\\Transformers\\Base\\' . $name . 'Transformer';
 
-		if(class_exists($str))
-		{
+        if(class_exists($str))
+        {
             BaseTransformer::$found[$name] = $str;
 
-			return $str;
-		}
+            return $str;
+        }
 
         $str = 'App\\Api\\V1\\Transformers\\Base\\' . $name . 'Transformer';
 
         BaseTransformer::$found[$name] = $str;
 
-		return $str;
-	}
+        return $str;
+    }
 }

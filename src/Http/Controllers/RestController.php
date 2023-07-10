@@ -6,7 +6,6 @@ use LaravelRest\Http\Requests\RequestInterface;
 use LaravelRest\Http\Requests\StartRequest;
 use LaravelRest\Http\Validators\ValidatorAble;
 use LaravelRest\Http\Response\Response;
-use LaravelRest\Http\Transformers\TransformerAble;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 use DB;
@@ -20,7 +19,7 @@ use Illuminate\Http\Request;
  */
 abstract class RestController extends Controller
 {
-    use ValidatorAble, TransformerAble;
+    use ValidatorAble;
 
     /**
      * @var bool

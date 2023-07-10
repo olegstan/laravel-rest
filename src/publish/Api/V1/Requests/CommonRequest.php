@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Api\V1\Requests\Validators;
+namespace App\Api\V1\Requests;
 
 use LaravelRest\Http\Validators\BaseValidator;
 

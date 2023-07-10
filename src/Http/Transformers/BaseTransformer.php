@@ -70,44 +70,55 @@ class BaseTransformer extends TransformerAbstract
 		foreach($relations as $key => $value)
 		{
 			if($value && Str::is('*Collection', get_class($value))) {
-                $first = $value->first();
-                if ($first) {
-                    $name = self::getClass($first, 'App\Models\\');
+
+			    if(Str::is('Common\Models*', get_class($value)))
+			    {
+                    $first = $value->first();
+                    if ($first) {
+                        $name = self::getClass($first, 'Common\Models\\');
+                        $transformName = 'Common\\Transformers\\'.str_replace('_', '', ucfirst($name)).'Transformer';
+                        BaseTransformer::$found[$name] = $transformName;
+                        $transform = new $transformName();
+                        $transformed[$key] = [];
+
+                        foreach ($value as $v) {
+                            $transformed[$key][] = $transform->transform($v);
+                        }
+                    } else {
+                        $transformed[$key] = [];
+                    }
+                }else{
+                    $first = $value->first();
+                    if ($first) {
+                        $name = self::getClass($first, 'App\Models\\');
+                        $transformName = self::getTransformClass($name);
+                        $transform = new $transformName();
+                        $transformed[$key] = [];
+
+                        foreach ($value as $v) {
+                            $transformed[$key][] = $transform->transform($v);
+                        }
+                    } else {
+                        $transformed[$key] = [];
+                    }
+                }
+            }else{
+                if($value && Str::is('Common\Models*', get_class($value)))
+                {
+                    $name = self::getClass($value, 'Common\Models\\');
+                    $transformName = 'Common\\Transformers\\'.str_replace('_', '', ucfirst($name)).'Transformer';
+                    $transform = new $transformName();
+
+                    $transformed[$key] = $transform->transform($value);
+                }else if($value){
+                    $name = self::getClass($value, 'App\Models\\');
                     $transformName = self::getTransformClass($name);
                     $transform = new $transformName();
-                    $transformed[$key] = [];
 
-                    foreach ($value as $v) {
-                        $transformed[$key][] = $transform->transform($v);
-                    }
-                } else {
-                    $transformed[$key] = [];
+                    $transformed[$key] = $transform->transform($value);
+                }else{
+                    $transformed[$key] = null;
                 }
-            }elseif ($value && Str::is('Common\Models*', get_class($value))) {
-                $first = $value->first();
-                if ($first) {
-                    $name = self::getClass($first, 'Common\Models\\');
-                    $transformName = 'Common\\Transformers\\'.str_replace('_', '', ucfirst($name)).'Transformer';
-                    BaseTransformer::$found[$name] = $transformName;
-                    $transform = new $transformName();
-                    $transformed[$key] = [];
-
-//                    foreach ($value as $v) {
-                        $transformed[$key][] = $transform->transform($value);
-//                    }
-                } else {
-                    $transformed[$key] = [];
-                }
-			}else{
-				if($value){
-					$name = self::getClass($value, 'App\Models\\');
-					$transformName = self::getTransformClass($name);
-                    $transform = new $transformName();
-
-					$transformed[$key] = $transform->transform($value);
-				}else{
-					$transformed[$key] = null;
-				}
 			}
 		}
 

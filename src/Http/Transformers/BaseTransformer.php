@@ -73,7 +73,7 @@ class BaseTransformer extends TransformerAbstract
             {
                 $first = $value->first();
                 if ($first) {
-                    $name = self::getClass($first, self::getPrefix($value));
+                    $name = self::getClass($first, self::getPrefix($first));
                     $transformName = self::getTransformClass($name);
                     $transform = new $transformName();
                     $transformed[$key] = [];
@@ -110,6 +110,7 @@ class BaseTransformer extends TransformerAbstract
         if(gettype($str) == 'object'){
             $str = get_class($str);
         }
+
         if(!$prefixTo){
             return substr(strrchr($str, "\\"), 1);
         }else{
@@ -143,16 +144,20 @@ class BaseTransformer extends TransformerAbstract
      * @param $name
      * @return string
      */
-    public static function getTransformClass($name, $library = false)
+    public static function getTransformClass($name)
     {
-        if (Str::is('Common\Models*', $name))
-        {
-            return 'Common\\Transformers\\' . $name . 'Transformer';
-        }
-
         if(isset(BaseTransformer::$found[$name]))
         {
             return BaseTransformer::$found[$name];
+        }
+
+        if (Str::is('Common\Models*', $name))
+        {
+            $str = 'Common\\Transformers\\' . $name . 'Transformer';
+
+            BaseTransformer::$found[$name] = $str;
+
+            return $str;
         }
 
         $role = Auth::getRole();

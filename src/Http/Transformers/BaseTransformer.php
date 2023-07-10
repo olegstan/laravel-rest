@@ -73,9 +73,7 @@ class BaseTransformer extends TransformerAbstract
             {
                 $first = $value->first();
                 if ($first) {
-                    $name = self::getClass($first, self::getPrefix($first));
-                    $transformName = self::getTransformClass($name);
-                    $transform = new $transformName();
+                    $transform = self::createTransformer($first);
                     $transformed[$key] = [];
 
                     foreach ($value as $v) {
@@ -86,9 +84,7 @@ class BaseTransformer extends TransformerAbstract
                 }
             }else{
                 if($value){
-                    $name = self::getClass($value, self::getPrefix($value));
-                    $transformName = self::getTransformClass($name);
-                    $transform = new $transformName();
+                    $transform = self::createTransformer($value);
 
                     $transformed[$key] = $transform->transform($value);
                 }else{
@@ -141,6 +137,17 @@ class BaseTransformer extends TransformerAbstract
     }
 
     /**
+     * @param $value
+     * @return mixed
+     */
+    public static function createTransformer($value)
+    {
+        $name = self::getClass($value, self::getPrefix($value));
+        $transformName = self::getTransformClass($name);
+        return new $transformName();
+    }
+
+    /**
      * @param $name
      * @return string
      */
@@ -151,10 +158,10 @@ class BaseTransformer extends TransformerAbstract
             return BaseTransformer::$found[$name];
         }
 
-        if (Str::is('Common\Models*', $name))
-        {
-            $str = 'Common\\Transformers\\' . $name . 'Transformer';
+        $str = 'Common\\Transformers\\' . $name . 'Transformer';
 
+        if(class_exists($str))
+        {
             BaseTransformer::$found[$name] = $str;
 
             return $str;

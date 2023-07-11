@@ -8,7 +8,7 @@ use Request;
 
 trait ValidatorAble
 {
-    public static $namespaceValidators = 'App\Api\V1\Requests\Validators\\';
+    public static $namespaceValidators = 'App\Api\V1\Requests\\';
 
     /**
      * @param string $t
@@ -65,7 +65,7 @@ trait ValidatorAble
             return $validateClass;
         }
 
-        $validateClass = 'App\Api\V1\Requests\Validators\Base\\' . ucfirst(IndexController::$target) . 'Request';
+        $validateClass = 'App\Api\V1\Requests\Base\\' . ucfirst(IndexController::$target) . 'Request';
         if (class_exists($validateClass)) {
             return $validateClass;
         }

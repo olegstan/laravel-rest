@@ -29,9 +29,7 @@ class LaravelRestServiceProvider extends ServiceProvider
             $this->app->alias('request', StartRequest::class);
         }
 
-        $this->app['router']->middleware('api.token', Token::class);
-
-        Route::group(['prefix' => '/api/v1', 'middleware' => ['api.token']], function () {
+        Route::group(['prefix' => '/api/v1', 'middleware' => config('rest.middlewares')], function () {
             Route::any('call/{target}/{method}', ['as' => 'api.v1.call', 'uses' => IndexController::class . '@index']);
         });
     }

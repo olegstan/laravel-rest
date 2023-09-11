@@ -103,7 +103,7 @@ class Response extends IlluminateResponse
                 }else{
                     $this->transformData->transform(static function ($value)
                     {
-                        $transformerModel = BaseTransformer::getTransformClass(BaseTransformer::getClass($value, 'App\Models\\'));
+                        $transformerModel = BaseTransformer::getTransformClass(BaseTransformer::getClass($value, BaseTransformer::getPrefix($value)));
 
                         return (new $transformerModel)->transform($value);
                     });
@@ -119,7 +119,7 @@ class Response extends IlluminateResponse
                 }else{
                     $this->transformData->transform(static function ($value)
                     {
-                        $transformerModel = BaseTransformer::getTransformClass(BaseTransformer::getClass($value, 'App\Models\\'));
+                        $transformerModel = BaseTransformer::getTransformClass(BaseTransformer::getClass($value, BaseTransformer::getPrefix($value)));
 
                         return (new $transformerModel)->transform($value);
                     });
@@ -138,7 +138,7 @@ class Response extends IlluminateResponse
                 }else{
                     $this->transformData->transform(static function ($value)
                     {
-                        $transformerModel = BaseTransformer::getTransformClass(BaseTransformer::getClass($value, 'App\Models\\'));
+                        $transformerModel = BaseTransformer::getTransformClass(BaseTransformer::getClass($value, BaseTransformer::getPrefix($value)));
 
                         return (new $transformerModel)->transform($value);
                     });
@@ -156,7 +156,7 @@ class Response extends IlluminateResponse
                 }else{
                     if ($this->transformData)
                     {
-                        $transformerModel = BaseTransformer::getTransformClass(BaseTransformer::getClass($this->transformData, 'App\Models\\'));
+                        $transformerModel = BaseTransformer::getTransformClass(BaseTransformer::getClass($this->transformData, BaseTransformer::getPrefix($this->transformData)));
 
                         $this->transformData = (new $transformerModel)->transform($this->transformData);
                     } else

@@ -286,6 +286,10 @@ abstract class RestController extends Controller
         if ($key === 'whereHas') {
             $this->prepareWhereHas($j, $subQuery);
             return;
+        }else if ($key === 'whereHasMorph') {
+
+            $this->prepareWhereHasMorph($j, $subQuery);
+            return;
         }else if ($key === 'whereDoesntHave') {
 
             $this->prepareWhereDoesntHave($j, $subQuery);
@@ -361,6 +365,31 @@ abstract class RestController extends Controller
             foreach ($whereHasQuery['whereHas'] as $query)
             {
                 $j->whereHas($query);
+            }
+        }
+    }
+
+    /**
+     * @param $j
+     * @param $whereHasQuery
+     * @return array
+     */
+    protected function prepareWhereHasMorph($j, &$whereHasQuery)
+    {
+        if (isset($whereHasQuery['whereHasMorph'][1]) && isset($whereHasQuery['whereHasMorph'][1]['query'])) {
+
+            $query = $whereHasQuery['whereHasMorph'][1]['query'];
+            $j->whereHasMorph($whereHasQuery['whereHasMorph'][0], function ($j) use ($query)
+            {
+                foreach ($query as &$subQuery)
+                {
+                    $this->commonPrepareQuery($j, $subQuery);
+                }
+            });
+        } else if(isset($whereHasQuery['whereHasMorph']) && is_array($whereHasQuery['whereHasMorph'])) {
+            foreach ($whereHasQuery['whereHasMorph'] as $query)
+            {
+                $j->whereHasMorph($query);
             }
         }
     }

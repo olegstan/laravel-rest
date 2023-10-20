@@ -379,7 +379,7 @@ abstract class RestController extends Controller
         if (isset($whereHasQuery['whereHasMorph'][1]) && isset($whereHasQuery['whereHasMorph'][1]['query'])) {
 
             $query = $whereHasQuery['whereHasMorph'][1]['query'];
-            $j->whereHasMorph($whereHasQuery['whereHasMorph'][0], function ($j) use ($query)
+            $j->whereHasMorph($whereHasQuery['whereHasMorph'][0], '*', function ($j) use ($query)
             {
                 foreach ($query as &$subQuery)
                 {

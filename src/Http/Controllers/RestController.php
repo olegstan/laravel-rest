@@ -626,7 +626,7 @@ abstract class RestController extends Controller
                 return $this->response()->json($item->toArray())->addMeta('text', 'Запись создана')->addMeta('id', $item->id);
             }
             return $this->response()->error('Не удалось создать запись');
-        }, config('app.transaction_second'));
+        }, config('app.transaction_tries'));
     }
 
     /**
@@ -677,7 +677,7 @@ abstract class RestController extends Controller
             }
 
             return $this->response()->error('Не удалось обновить запись');
-        }, config('app.transaction_second'));
+        }, config('app.transaction_tries'));
     }
 
     /**
@@ -713,7 +713,7 @@ abstract class RestController extends Controller
             }
 
             return $this->response()->error('Не удалось удалить запись');
-        }, config('app.transaction_second'));
+        }, config('app.transaction_tries'));
     }
 
     /**

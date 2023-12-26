@@ -19,9 +19,15 @@ use Session;
 class IndexController extends Controller
 {
     use ResponseTrait;
-    
+
+    /**
+     * @var null
+     */
     public static $target = null;
-    public static $method = null;
+    /**
+     * @var null
+     */
+    public static $action = null;
 
     /**
      * @param $target
@@ -30,10 +36,10 @@ class IndexController extends Controller
      * @return \LaravelRest\Http\Response\Response|mixed
      * @throws Exception
      */
-	public function index($target, $method, StartRequest $request)
+	public function index($target, $action, StartRequest $request)
     {
         self::$target = $target;
-        self::$method = $method;
+        self::$action = $action;
         $role = Auth::getRole();
 
         $controllerName = 'App\\Api\\V1\\Controllers\\' . ucfirst($role) . '\\' . $this->getTarget($target);
@@ -50,15 +56,14 @@ class IndexController extends Controller
             $request->routeController = $controllerName;
         }
 
-
-		if(!method_exists($controllerName, $this->getMethod($method)))
+		if(!method_exists($controllerName, $this->getAction($action)))
 		{
-			return $this->response()->error('Урл не найден', 404, 'In controller ' . $controllerName . ' not found method ' . $this->getMethod($method), [
+			return $this->response()->error('Урл не найден', 404, 'In controller ' . $controllerName . ' not found method ' . $this->getAction($action), [
                 'controller' => $controllerName,
-                'method' => $method
+                'action' => $action
             ]);
 		}else{
-            $request->routeMethod = $this->getMethod($method);
+            $request->routeMethod = $this->getAction($action);
         }
 
         /**
@@ -66,14 +71,14 @@ class IndexController extends Controller
          */
         $controller = new $controllerName($request, $request->getQuery());
 
-        if(property_exists($controller, 'disabledMethods') && in_array($this->getMethod($method), $controller->disabledMethods))
+        if(property_exists($controller, 'disabledMethods') && in_array($this->getAction($action), $controller->disabledMethods))
         {
             return $this->response()->error('Действие недоступно', 403);
         }
 
         $arguments = $request->getArguments();
 
-        $refMethod = new ReflectionMethod($controller, $this->getMethod($method));
+        $refMethod = new ReflectionMethod($controller, $this->getAction($action));
         $params = $refMethod->getParameters();
         for($i = count($arguments); $i < $refMethod->getNumberOfParameters(); $i++)
         {
@@ -94,16 +99,34 @@ class IndexController extends Controller
 			return $this->response()->error($errors);
 		}
 
-        return call_user_func_array([$controller, $this->getMethod($method)], $arguments);
+        return call_user_func_array([$controller, $this->getAction($action)], $arguments);
 	}
 
     /**
-     * @param $method
+     * @param $action
      * @return string
      */
-	public function getMethod($method)
+	public function getAction($action)
     {
-		return camel_case(strtolower(Request::method()) . ucfirst($method));
+        $string = Request::method();
+        //ищем замену метода
+        if(isset($_REQUEST['_method']))
+        {
+            $string = $_REQUEST['_method'];
+        }
+
+        if(isset($_POST['_method']))
+        {
+            $string = $_POST['_method'];
+        }
+
+        $data = json_decode(file_get_contents("php://input"));
+        if(isset($data->_method))
+        {
+            $string = $data->_method;
+        }
+
+		return camel_case(strtolower($string) . ucfirst($action));
 	}
 
     /**

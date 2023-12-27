@@ -35,7 +35,7 @@ trait ValidatorAble
 	public function getValidateClass()
     {
         $str = '';
-        $arr = explode('-', IndexController::$method);
+        $arr = explode('-', IndexController::$action);
         foreach($arr as $k => $val)
         {
             $str .= ucfirst(camel_case($val));

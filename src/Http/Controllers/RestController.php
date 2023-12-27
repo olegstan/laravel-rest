@@ -102,6 +102,7 @@ abstract class RestController extends Controller
         'has',
         'whereAbs',
         'whereIn',
+        'orWhereIn',
         'whereNotIn',
         'whereHas',
         'orWhereHas',

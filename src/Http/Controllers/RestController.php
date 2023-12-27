@@ -50,6 +50,10 @@ abstract class RestController extends Controller
      */
     public $perPage = 25;
     /**
+     * @var int
+     */
+    public $fields = ['id'];
+    /**
      * @var Request
      */
     public $request;
@@ -99,36 +103,39 @@ abstract class RestController extends Controller
     public $builderAvailableMethod = [
         'select',
         'where',
-        'has',
-        'whereAbs',
-        'whereIn',
-        'orWhereIn',
-        'whereNotIn',
-        'whereHas',
-        'orWhereHas',
-        'whereDoesntHave',
-        'orWhereDoesntHave',
         'orWhere',
-        'orderBy',
-        'groupBy',
-        'whereNull',
-        'orWhereNull',
-        'whereNotNull',
-        'orWhereNotNull',
-        'with',
-        'offset',
-        'limit',
-        'distinct',
-        'having',
-
-        'owner',
-        'whereAbs',
         'whereDate',
         'orWhereDate',
         'whereYear',
         'orWhereYear',
         'whereMonth',
         'orWhereMonth',
+        'has',
+        'whereIn',
+        'orWhereIn',
+        'whereNotIn',
+        'orWhereNotIn',
+        'whereHas',
+        'orWhereHas',
+        'whereHasMorph',
+        'orWhereHasMorph',
+        'whereDoesntHave',
+        'orWhereDoesntHave',
+
+        'orderBy',
+        'groupBy',
+        'whereNull',
+        'orWhereNull',
+        'whereNotNull',
+        'orWhereNotNull',
+
+        'with',
+        'withCount',
+        'offset',
+        'limit',
+        'distinct',
+        'owner',
+        'whereAbs',
     ];
 
     /**
@@ -172,16 +179,21 @@ abstract class RestController extends Controller
     /**
      * @return array|string[]
      */
-    public function getBuilderAvailableMethod()
+    private function getBuilderAvailableMethod()
     {
         return $this->builderAvailableMethod;
+    }
+
+    private function setFields()
+    {
+
     }
 
     /**
      * @param null $perPage
      * @return $this
      */
-    public function setPerPage($perPage = null)
+    private function setPerPage($perPage = null)
     {
         if (is_null($perPage))
         {
@@ -219,7 +231,7 @@ abstract class RestController extends Controller
     /**
      * @throws Exception
      */
-    protected function prepareQuery()
+    private function prepareQuery()
     {
         $this->filterQueryWith($this->queryBuild);
         $query = $this->queryBuild;
@@ -251,7 +263,7 @@ abstract class RestController extends Controller
     /**
      * @param $query
      */
-    protected function filterQueryWith(&$query)
+    private function filterQueryWith(&$query)
     {
         $with = [];
 
@@ -279,7 +291,7 @@ abstract class RestController extends Controller
      * @throws Exception
      * TODO
      */
-    protected function commonPrepareQuery($j, &$subQuery)
+    private function commonPrepareQuery($j, &$subQuery)
     {
         $key = key($subQuery);
         $args = $subQuery[$key];
@@ -325,7 +337,7 @@ abstract class RestController extends Controller
      * @param $withQuery
      * @return array
      */
-    protected function prepareWith(&$withQuery)
+    private function prepareWith(&$withQuery)
     {
         $args = [];
         if (isset($withQuery['with'][1]) && isset($withQuery['with'][1]['query'])) {
@@ -350,7 +362,7 @@ abstract class RestController extends Controller
      * @param $whereHasQuery
      * @return array
      */
-    protected function prepareWhereHas($j, &$whereHasQuery)
+    private function prepareWhereHas($j, &$whereHasQuery)
     {
         if (isset($whereHasQuery['whereHas'][1]) && isset($whereHasQuery['whereHas'][1]['query'])) {
 
@@ -375,7 +387,7 @@ abstract class RestController extends Controller
      * @param $whereHasQuery
      * @return array
      */
-    protected function prepareWhereHasMorph($j, &$whereHasQuery)
+    private function prepareWhereHasMorph($j, &$whereHasQuery)
     {
         if (isset($whereHasQuery['whereHasMorph'][1]) && isset($whereHasQuery['whereHasMorph'][1]['query'])) {
 
@@ -399,7 +411,7 @@ abstract class RestController extends Controller
      * @param $whereHasQuery
      * @return array
      */
-    protected function prepareWhereDoesntHave($j, &$whereHasQuery)
+    private function prepareWhereDoesntHave($j, &$whereHasQuery)
     {
         if (isset($whereHasQuery['whereDoesntHave'][1]) && isset($whereHasQuery['whereDoesntHave'][1]['query'])) {
 
@@ -423,7 +435,7 @@ abstract class RestController extends Controller
      * @param $j
      * @param $whereAbsQuery
      */
-    protected function prepareWhereAbs($j, &$whereAbsQuery)
+    private function prepareWhereAbs($j, &$whereAbsQuery)
     {
         if (isset($whereAbsQuery['whereAbs'][0]) && isset($whereAbsQuery['whereAbs'][1]) && isset($whereAbsQuery['whereAbs'][2])) {
 
@@ -435,7 +447,7 @@ abstract class RestController extends Controller
      * @param $args
      * @throws Exception
      */
-    protected function queryCheckSelect($args)
+    private function queryCheckSelect($args)
     {
         $arr = is_array($args[0]) ? $args[0] : $args;
 
@@ -448,7 +460,7 @@ abstract class RestController extends Controller
     /**
      * @param $args
      */
-    protected function prepareBase(&$args)
+    private function prepareBase(&$args)
     {
         foreach ($args as &$arg)
         {
@@ -470,7 +482,7 @@ abstract class RestController extends Controller
      * @param $funcName
      * @throws Exception
      */
-    protected function queryCheckAvailable($funcName)
+    private function queryCheckAvailable($funcName)
     {
         if (array_search($funcName, $this->getBuilderAvailableMethod()) === false)
         {
@@ -478,7 +490,11 @@ abstract class RestController extends Controller
         }
     }
 
-    protected function prepareWhere($arr)
+    /**
+     * @param $arr
+     * @throws Exception
+     */
+    private function prepareWhere($arr)
     {
         if (count($arr) > 0)
         {
@@ -530,59 +546,6 @@ abstract class RestController extends Controller
     }
 
     /**
-     * @param RequestInterface $request
-     * @return Response
-     * @throws Exception
-     */
-    public function getIndex($request)
-    {
-        $this->queryCondition($request);
-        $this->indexCallback($request);
-        return $this->responseIndex($request->get('paginateType'));
-    }
-
-    /**
-     * @param $request
-     */
-    public function queryCondition($request)
-    {
-
-    }
-
-    /**
-     * @param RequestInterface $request
-     */
-    public function indexCallback($request)
-    {
-
-    }
-
-    /**
-     * @param $paginate
-     * @return Response
-     */
-    public function responseIndex($paginate)
-    {
-        switch ($paginate) {
-            case 'all':
-//                if (!$this->modelQuery->getQuery()->limit || $this->modelQuery->getQuery()->limit > 200)
-//                    $this->modelQuery->limit(1500);//TODO
-
-                return $this->response()->collection($this->modelQuery->get());
-            case 'allOptimize':
-                return $this->response()->collectOptimize($this->modelQuery->get());
-            case 'first':
-                return $this->response()->item($this->modelQuery->first());
-            case 'paginate':
-            default:
-                return $this->response()
-                    ->paginator($this->modelQuery->paginate($this->perPage))//->addMeta('cache_key', $this->getCacheKey())
-                    ;
-
-        }
-    }
-
-    /**
      * @return string
      */
     public function getCacheKey()
@@ -611,159 +574,5 @@ abstract class RestController extends Controller
         $path = $this->request->path();
         $pathParts = explode('/', $path);
         return $pathParts[3] . ":";
-    }
-
-    /**
-     * @param $request
-     * @return mixed
-     * @throws \Throwable
-     */
-    public function postStore($request)
-    {
-        return DB::transaction(function () use ($request)
-        {
-            $item = call_user_func([$this->modelName, 'create'], $request->only($this->onlyFieldsCreate));
-            if ($item) {
-                return $this->response()->json($item->toArray())->addMeta('text', 'Запись создана')->addMeta('id', $item->id);
-            }
-            return $this->response()->error('Не удалось создать запись');
-        }, config('app.transaction_tries'));
-    }
-
-    /**
-     * @param $id
-     * @param $request
-     * @return Response
-     */
-    public function putActive($id, $request)
-    {
-        $this->queryCondition($request);
-        /**
-         * @var BaseModel $item
-         */
-        $item = $this->modelQuery->where('id', '=', $id)->firstOrFail();
-        $item->fieldSwitch('is_active');
-        return $this->response()->success();
-    }
-
-    /**
-     * @param $id
-     * @param $request
-     * @return Response
-     */
-    public function deleteRestore($id, $request)
-    {
-        $this->modelQuery = $this->modelName::query();
-        $this->queryCondition($request);
-        $item = $this->modelQuery->where('id', '=', $id)->whereNotNull('deleted_at')->withoutGlobalScope(SoftDeletingScope::class)->firstOrFail();
-        $item->update(['deleted_at' => null]);
-        return $this->response()->success('Запись успешно восстановлена');
-    }
-
-    /**
-     * @param $id
-     * @param $request
-     * @return Response|mixed
-     * @throws \Throwable
-     */
-    public function putUpdate($id, $request)
-    {
-        return DB::transaction(function () use ($id, $request){
-            $this->queryCondition($request);
-            $this->updateCallback($request);
-            $item = $this->modelQuery->where('id', '=', $id)->first(); // firstOrError?
-
-            if ($item && $item->update($request->only($this->onlyFieldsUpdate))) {
-                return $this->response()->success('Запись обновлена');
-            }
-
-            return $this->response()->error('Не удалось обновить запись');
-        }, config('app.transaction_tries'));
-    }
-
-    /**
-     * @param RequestInterface $request
-     * @return void
-     */
-    public function updateCallback($request)
-    {
-
-    }
-
-    /**
-     * @param int $id
-     * @param StartRequest $request
-     * @return mixed
-     * @throws \Throwable
-     */
-    public function deleteDestroy(int $id, StartRequest $request)
-    {
-        return DB::transaction(function () use ($id, $request){
-            $this->queryCondition($request);
-            $this->destroyCallback($id, $request);
-            $item = $this->modelQuery->where('id', '=', $id)->first();
-
-            if ($this->sofDelete) {
-                if ($item && $item->update(['deleted_at' => Carbon::now()])) {
-                    return $this->response()->success('Запись успешно удалена');
-                }
-            } else {
-                if ($item && $item->delete()) {
-                    return $this->response()->success('Запись успешно удалена');
-                }
-            }
-
-            return $this->response()->error('Не удалось удалить запись');
-        }, config('app.transaction_tries'));
-    }
-
-    /**
-     * @param $id
-     * @param RequestInterface $request
-     * @return mixed
-     */
-
-    public function destroyCallback($id, $request)
-    {
-
-    }
-
-    /**
-     * @return string
-     */
-    public function getMessageSuccess($action = null)
-    {
-
-        switch ($this->getActionName()) {
-            case 'store':
-                return 'Запись создана';
-            case 'update':
-                return 'Запись обновлена';
-            case 'destroy':
-                return 'Запись удалена';
-        }
-    }
-
-    /**
-     * @return mixed|string
-     */
-    public function getActionName()
-    {
-        return $this->actionName;
-    }
-
-    /**
-     * @return string
-     */
-    public function getMessageError()
-    {
-        switch ($this->getActionName()) {
-            case 'store':
-                return 'Не удалось создать запись';
-            case 'update':
-                return 'Не удалось обновить запись';
-            case 'destroy':
-                return 'Не удалось удалить запись';
-        }
     }
 }

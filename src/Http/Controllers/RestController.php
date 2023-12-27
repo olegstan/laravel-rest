@@ -176,13 +176,7 @@ abstract class RestController extends Controller
         }
     }
 
-    /**
-     * @return array|string[]
-     */
-    private function getBuilderAvailableMethod()
-    {
-        return $this->builderAvailableMethod;
-    }
+
 
     private function setFields()
     {
@@ -476,6 +470,14 @@ abstract class RestController extends Controller
                 };
             }
         }
+    }
+
+    /**
+     * @return array|string[]
+     */
+    public function getBuilderAvailableMethod()
+    {
+        return $this->builderAvailableMethod;
     }
 
     /**

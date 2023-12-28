@@ -14,9 +14,19 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests, ResponseTrait, ValidatorAble;
 
+    /**
+     * @var null
+     */
     public static $target = null;
-    public static $method = null;
+    /**
+     * @var null
+     */
+    public static $action = null;
 
+    /**
+     * Controller constructor.
+     * @param StartRequest $request
+     */
     function __construct(StartRequest $request)
     {
         $request->init();

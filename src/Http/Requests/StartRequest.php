@@ -26,18 +26,29 @@ class StartRequest extends Request implements RequestInterface
         if(is_array($this->get('data')))
         {
             $input = $this->get('data');
+
             array_walk_recursive($input, function(&$item)
             {
-                if(is_array($item)){
-
-                }else{
+                if(is_string($item))
+                {
                     $item = trim($item);
 
-                    if($item === '' || $item === [])
+                    if($item === '')
                     {
-                        $item = null;
+                        return null;
+                    }
+
+                    if($item === 'true')
+                    {
+                        return true;
+                    }
+
+                    if($item === 'false')
+                    {
+                        return false;
                     }
                 }
+
                 return $item;
             });
         }
@@ -49,11 +60,11 @@ class StartRequest extends Request implements RequestInterface
      * @var array
      */
     public $officialKeys = [
-		'arguments',
-		'query',
-		'data',
-		'session',
-	];
+        'arguments',
+        'query',
+        'data',
+        'session',
+    ];
     /**
      * @var
      */
@@ -62,10 +73,10 @@ class StartRequest extends Request implements RequestInterface
     /**
      * @param $input
      */
-	public function setCustomData($input)
+    public function setCustomData($input)
     {
-		$this->customData = new ParameterBag($input);
-	}
+        $this->customData = new ParameterBag($input);
+    }
 
     /**
      *
@@ -86,47 +97,47 @@ class StartRequest extends Request implements RequestInterface
     /**
      * @param bool $key
      */
-	public function transformToNull($key = false)
+    public function transformToNull($key = false)
     {
-		$input = $this->all();
-		foreach($input as $k => &$val)
-		{
-			if(!$key){
-				
-			}else{
-				if($k === $key){
-					if($val === '')
-					{
-						$val = null;
-					}
-				}
-			}
-		}
-		
-		$this->setCustomData($input);
-	}
+        $input = $this->all();
+        foreach($input as $k => &$val)
+        {
+            if(!$key){
+
+            }else{
+                if($k === $key){
+                    if($val === '')
+                    {
+                        $val = null;
+                    }
+                }
+            }
+        }
+
+        $this->setCustomData($input);
+    }
 
     /**
      * @return array|mixed
      */
     public function getArguments()
     {
-		$arr = $this->get('arguments', []);
-		foreach($arr as &$val)
-		{
-			if($val == 'false' || $val == 'true')
-				$val = filter_var($val, FILTER_VALIDATE_BOOLEAN);
-		}
-		return $arr;
-	}
+        $arr = $this->get('arguments', []);
+        foreach($arr as &$val)
+        {
+            if($val == 'false' || $val == 'true')
+                $val = filter_var($val, FILTER_VALIDATE_BOOLEAN);
+        }
+        return $arr;
+    }
 
     /**
      * @return array|mixed
      */
     public function getQuery()
     {
-		return $this->get('query', []);
-	}
+        return $this->get('query', []);
+    }
 
     /**
      * @param string $key
@@ -135,18 +146,18 @@ class StartRequest extends Request implements RequestInterface
      */
     public function get($key, $default = null)
     {
-		if(in_array($key, $this->officialKeys))
-		{
-			return parent::get($key, $default);
-		}
-		
-		if($this->customData)
-		{
+        if(in_array($key, $this->officialKeys))
+        {
+            return parent::get($key, $default);
+        }
+
+        if($this->customData)
+        {
             return !is_null($this->customData->get($key, null)) ? $this->customData->get($key) : $default;
         }
 
-		return $default;
-	}
+        return $default;
+    }
 
     /**
      * @param string $key
@@ -155,8 +166,8 @@ class StartRequest extends Request implements RequestInterface
      */
     public function input($key = null, $default = null)
     {
-		return $this->get($key, $default);
-	}
+        return $this->get($key, $default);
+    }
 
     /**
      * @param array|string $key
@@ -164,15 +175,15 @@ class StartRequest extends Request implements RequestInterface
      */
     public function has($key)
     {
-		if(in_array($key, $this->officialKeys))
-			return parent::has($key);
+        if(in_array($key, $this->officialKeys))
+            return parent::has($key);
 
-		
-		if($this->customData)
-			return $this->customData->has($key);
-		
-		return false;
-	}
+
+        if($this->customData)
+            return $this->customData->has($key);
+
+        return false;
+    }
 
     /**
      * @param null $keys
@@ -180,11 +191,11 @@ class StartRequest extends Request implements RequestInterface
      */
     public function all($keys = null)
     {
-		if($this->customData)
-			return $this->customData->all($keys);
-		
-		return [];
-	}
+        if($this->customData)
+            return $this->customData->all($keys);
+
+        return [];
+    }
 
     /**
      * @param array $params
@@ -203,15 +214,15 @@ class StartRequest extends Request implements RequestInterface
      * @param $keys
      * @return mixed
      */
-	public function only($keys)
+    public function only($keys)
     {
-		return Arr::only($this->all(), $keys);
-	}
+        return Arr::only($this->all(), $keys);
+    }
 
     /**
      * @return string
      */
-	public function getRouteController()
+    public function getRouteController()
     {
         return $this->routeController;
     }
@@ -219,7 +230,7 @@ class StartRequest extends Request implements RequestInterface
     /**
      * @return string
      */
-	public function getRouteMethod()
+    public function getRouteMethod()
     {
         return $this->routeMethod;
     }

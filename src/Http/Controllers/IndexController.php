@@ -80,6 +80,10 @@ class IndexController extends Controller
 
         $refMethod = new ReflectionMethod($controller, $this->getAction($action));
         $params = $refMethod->getParameters();
+
+
+        //TODO может быть несколько аргументов в put методе, если передать только один, то в него не подставится тот что был передеан
+        //TODO putUpdate($request) вызовает ошибку, придумать как обработать этот момент
         for($i = count($arguments); $i < $refMethod->getNumberOfParameters(); $i++)
         {
             if($params[$i]->isDefaultValueAvailable()){

@@ -3,9 +3,7 @@
 namespace LaravelRest\Http\Controllers;
 
 use LaravelRest\Http\Requests\RequestInterface;
-use LaravelRest\Http\Requests\StartRequest;
 use LaravelRest\Http\Validators\ValidatorAble;
-use LaravelRest\Http\Response\Response;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 use DB;
@@ -290,35 +288,46 @@ abstract class RestController extends Controller
         $key = key($subQuery);
         $args = $subQuery[$key];
 
-        if ($key === 'whereHas') {
-            $this->prepareWhereHas($j, $subQuery);
-            return;
-        }else if ($key === 'whereHasMorph') {
+        switch ($key)
+        {
+            case 'whereHas':
+                $this->prepareWhereHas($j, $subQuery);
+                return;
+                break;
+            case 'whereHasMorph':
+                $this->prepareWhereHasMorph($j, $subQuery);
+                return;
+                break;
+            case 'whereDoesntHave':
+                $this->prepareWhereDoesntHave($j, $subQuery);
+                return;
+                break;
+            case 'whereAbs':
+                $this->prepareWhereAbs($j, $subQuery);
+                return;
+                break;
+            case 'with':
+                $args = $this->prepareWith($subQuery);
+                break;
+            case 'limit':
+                $this->perPage = !isset($args[0]) || (isset($args[0]) && $args[0]) > 200 ? 200 : $args[0];
+                break;
+            case 'select':
+                $this->queryCheckSelect($args);
+                break;
+            case 'orderBy':
+                if (isset($args[0]) && method_exists($this->model, 'scope' . ucfirst($args[0]))) {
+                    $j->{$args[0]}($args[1] ?? 'desc');
+                }else{
+                    call_user_func_array([$j, $key], $args);
+                }
 
-            $this->prepareWhereHasMorph($j, $subQuery);
-            return;
-        }else if ($key === 'whereDoesntHave') {
-
-            $this->prepareWhereDoesntHave($j, $subQuery);
-            return;
-        }else if ($key === 'whereAbs') {
-            $this->prepareWhereAbs($j, $subQuery);
-            return;
-        }else if ($key === 'with') {
-            $args = $this->prepareWith($subQuery);
-        } else if ($key === 'limit') {
-            $this->perPage = !isset($args[0]) || (isset($args[0]) && $args[0]) > 200 ? 200 : $args[0];
-        } else if ($key === 'select') {
-            $this->queryCheckSelect($args);
-        } elseif ($key === 'orderBy' && $args[0]) {
-            if (method_exists($this->model, 'scope' . ucfirst($args[0]))) {
-                $j->{$args[0]}($args[1] ?? 'desc');
-            }else{
-                call_user_func_array([$j, $key], $args);
-            }
-        } else {
-            $this->prepareBase($args);
+                break;
+            default:
+                $this->prepareBase($args);
+                break;
         }
+
 
         $this->queryCheckAvailable($key);
         if ($key !== 'orderBy') {

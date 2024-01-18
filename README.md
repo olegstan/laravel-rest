@@ -1,7 +1,7 @@
-Установка
+Install
 
 composer require olegstan/laravel-rest
 
-Связанный пакет для запроса данных
+Connected package
 
 https://github.com/olegstan/laravel-request

@@ -32,6 +32,21 @@ class BaseTransformer extends TransformerAbstract
     public static $found = [];
 
     /**
+     * @param $model
+     * @param $field
+     * @return array
+     */
+    public function transformDate($model, $field)
+    {
+        $row = [];
+        $row[$field] = $model->{$field};
+        $row[$field . '_date'] = $model->{$field} ? $model->{$field}->format('d.m.Y') : '';
+        $row[$field . '_datetime'] = $model->{$field} ? $model->{$field}->format('d.m.Y H:i:s') : '';
+
+        return $row;
+    }
+
+    /**
      * @param Model $model
      * @return mixed
      */

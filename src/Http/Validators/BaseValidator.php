@@ -201,11 +201,14 @@ class BaseValidator
             if(is_array($item)){
 
             }else{
-                $item = trim($item);
-
-                if($item === '')
+                if(is_string($item))
                 {
-                    $item = null;
+                    $item = trim($item);
+
+                    if($item === '')
+                    {
+                        $item = null;
+                    }
                 }
             }
             return $item;

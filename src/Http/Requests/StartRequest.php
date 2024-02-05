@@ -125,7 +125,7 @@ class StartRequest extends Request implements RequestInterface
         $arr = $this->get('arguments', []);
         foreach($arr as &$val)
         {
-            if($val == 'false' || $val == 'true')
+            if($val === 'false' || $val === 'true')
                 $val = filter_var($val, FILTER_VALIDATE_BOOLEAN);
         }
         return $arr;

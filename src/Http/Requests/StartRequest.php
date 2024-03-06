@@ -140,6 +140,20 @@ class StartRequest extends Request implements RequestInterface
     }
 
     /**
+     * @param $item
+     * @return array|string
+     */
+    public function recursiveUrlDecode($item)
+    {
+        if (is_array($item)) {
+            return array_map([$this, 'recursiveUrlDecode'], $item);
+        } elseif (is_string($item)) {
+            return urldecode($item);
+        }
+        return $item;
+    }
+
+    /**
      * @param string $key
      * @param array $default
      * @return array|mixed

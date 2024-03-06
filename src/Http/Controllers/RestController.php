@@ -3,6 +3,7 @@
 namespace LaravelRest\Http\Controllers;
 
 use LaravelRest\Http\Requests\RequestInterface;
+use LaravelRest\Http\Requests\StartRequest;
 use LaravelRest\Http\Validators\ValidatorAble;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
@@ -138,7 +139,7 @@ abstract class RestController extends Controller
 
     /**
      * RestController constructor.
-     * @param RequestInterface $request
+     * @param RequestInterface|StartRequest $request
      * @throws Exception
      */
     public function __construct(RequestInterface $request)
@@ -161,7 +162,7 @@ abstract class RestController extends Controller
 
             $this->setPerPage($request->get('perPage'));
             $this->setSoftDeletes();
-            $this->queryBuild = $request->getQuery();
+            $this->queryBuild = $request->recursiveUrlDecode($request->getQuery());
 
             $this->modelQuery = $this->modelName::query();
             $this->modelQuery->select($this->withTableAlias('*'));

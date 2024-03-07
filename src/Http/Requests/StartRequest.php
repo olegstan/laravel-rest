@@ -148,6 +148,8 @@ class StartRequest extends Request implements RequestInterface
         if (is_array($item)) {
             return array_map([$this, 'recursiveUrlDecode'], $item);
         } elseif (is_string($item)) {
+            // Замена '+' на '%2B' перед декодированием
+            $item = str_replace('+', '%2B', $item);
             return urldecode($item);
         }
         return $item;

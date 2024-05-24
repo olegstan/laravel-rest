@@ -4,6 +4,7 @@ namespace LaravelRest\Http\Response;
 
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Collection;
+use Illuminate\Http\Response;
 
 /**
  * Class ResponseFactory
@@ -13,49 +14,46 @@ class ResponseFactory
 {
     /**
      * @param Collection $collection
-     * @param $transformer
+     * @param callable|null $transformer
      * @param array $headers
      * @return Response
      */
-    public function collectOptimize(Collection $collection, $transformer = null, $headers = [])
+    public function collectOptimize(Collection $collection, $transformer = null, array $headers = [])
     {
-        $responseClass = config('rest.response');
-        return new $responseClass($collection, 200, $headers, $transformer, 'collectOptimize');
+        return $this->createResponse($collection, 200, $headers, $transformer, 'collectOptimize');
     }
+
     /**
      * @param Collection $collection
-     * @param $transformer
+     * @param callable|null $transformer
      * @param array $headers
      * @return Response
      */
-    public function collection(Collection $collection, $transformer = null, $headers = [])
+    public function collection(Collection $collection, $transformer = null, array $headers = [])
     {
-        $responseClass = config('rest.response');
-        return new $responseClass($collection, 200, $headers, $transformer, 'collect');
+        return $this->createResponse($collection, 200, $headers, $transformer, 'collect');
     }
 
     /**
      * @param Paginator $paginator
-     * @param $transformer
+     * @param callable|null $transformer
      * @param array $headers
      * @return Response
      */
-    public function paginator(Paginator $paginator, $transformer = null, $headers = [])
+    public function paginator(Paginator $paginator, $transformer = null, array $headers = [])
     {
-        $responseClass = config('rest.response');
-        return new $responseClass($paginator, 200, $headers, $transformer, 'paginator');
+        return $this->createResponse($paginator, 200, $headers, $transformer, 'paginator');
     }
 
     /**
-     * @param $item
-     * @param $transformer
+     * @param mixed $item
+     * @param callable|null $transformer
      * @param array $headers
      * @return Response
      */
-    public function item($item, $transformer = null, $headers = [])
+    public function item($item, $transformer = null, array $headers = [])
     {
-        $responseClass = config('rest.response');
-        return new $responseClass($item, 200, $headers, $transformer, 'item');
+        return $this->createResponse($item, 200, $headers, $transformer, 'item');
     }
 
     /**
@@ -63,11 +61,10 @@ class ResponseFactory
      * @param array $headers
      * @return Response
      */
-    public function json(array $data, $headers = [])
+    public function json(array $data, array $headers = [])
     {
-        $responseClass = config('rest.response');
-		return new $responseClass($data, 200, $headers);
-	}
+        return $this->createResponse($data, 200, $headers);
+    }
 
     /**
      * @param string $text
@@ -75,37 +72,59 @@ class ResponseFactory
      */
     public function success($text = '')
     {
-        $responseClass = config('rest.response');
-		$response = new $responseClass([]);
-		if(!empty($text)){
-			$response->addMeta('text', $text);
-		}
+        $response = $this->createResponse([], 200);
+        if (!empty($text)) {
+            $response->addMeta('text', $text);
+        }
         $response->morph();
-		return $response;
-	}
+        return $response;
+    }
 
     /**
-     * @param null $errors
+     * @param mixed|null $errors
      * @param int $code
      * @param string $context
      * @param array $data
      * @return Response
      */
-    public function error($errors = null, $code = 422, $context = '', $data = [])
+    public function error($errors = null, $code = 422, $context = '', array $data = [])
     {
-        $responseClass = config('rest.response');
-        $response = new $responseClass([]);
-		$response->error($code);
-		if($errors){
-			if(gettype($errors) == 'array' || gettype($errors) == 'object'){
-				$response->addMeta('errors', $errors);
-				$response->addMeta('message', 'Не удалось сохранить данные');
-			}elseif(gettype($errors) == 'string'){
-				$response->addMeta('text', $errors);
-			}
-		}
+        $response = $this->createResponse([], $code);
+        if ($errors) {
+            if (is_array($errors) || is_object($errors)) {
+                $response->addMeta('errors', $errors);
+                $response->addMeta('message', 'Не удалось сохранить данные');
+            } elseif (is_string($errors)) {
+                $response->addMeta('text', $errors);
+            }
+
+            if ($context) {
+                $response->addMeta('context', $context);
+            }
+        }
         $response->morph();
 
-		return $response;
-	}
+        return $response;
+    }
+
+    /**
+     * Helper method to create a response instance.
+     *
+     * @param mixed $data
+     * @param int $status
+     * @param array $headers
+     * @param callable|null $transformer
+     * @param string|null $method
+     * @return Response
+     */
+    private function createResponse($data, $status = 200, array $headers = [], $transformer = null, $method = null)
+    {
+        $responseClass = config('rest.response');
+        try {
+            return new $responseClass($data, $status, $headers, $transformer, $method);
+        } catch (\Exception $e) {
+            // Handle the exception (e.g., log it, rethrow it, etc.)
+            throw new \RuntimeException('Failed to create response instance.', 0, $e);
+        }
+    }
 }

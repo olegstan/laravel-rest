@@ -42,13 +42,14 @@ class IndexController extends Controller
         self::$action = $action;
         $role = Auth::getRole();
 
-        $controllerName = 'App\\Api\\V1\\Controllers\\' . ucfirst($role) . '\\' . $this->getTarget($target);
+        $controllerNameRole = 'App\\Api\\V1\\Controllers\\' . ucfirst($role) . '\\' . $this->getTarget($target);
+        $controllerName = $controllerNameRole;
         if(!class_exists($controllerName))
         {
 			$controllerName = 'App\\Api\\V1\\Controllers\\Common\\' . $this->getTarget($target);
 			if(!class_exists($controllerName))
 			{
-				return $this->response()->error('Урл не найден', 404, 'Not found controller ' . $controllerName, [
+				return $this->response()->error('Урл не найден', 404, 'Not found controller ' . $controllerName . ($role ? ' и ' . $controllerNameRole : ''), [
 				    'controller' => $controllerName
                 ]);
 			}

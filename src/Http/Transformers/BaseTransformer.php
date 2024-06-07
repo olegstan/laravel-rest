@@ -47,6 +47,20 @@ class BaseTransformer extends TransformerAbstract
     }
 
     /**
+     * @param $model
+     * @param $keys
+     * @return array|false|null[]
+     */
+    public function transformByKeys($model, $keys)
+    {
+        $data = array_map(function($key) use ($model) {
+            return property_exists($model, $key) ? $model->$key : null;
+        }, $keys);
+
+        return array_combine($keys, $data);
+    }
+
+    /**
      * @param Model $model
      * @return mixed
      */

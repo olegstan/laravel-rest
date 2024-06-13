@@ -141,16 +141,23 @@ class StartRequest extends Request implements RequestInterface
 
     /**
      * @param $item
-     * @return array|string
+     * @param $method
+     * @return array|array[]|string|string[]
      */
-    public function recursiveUrlDecode($item)
+    public function recursiveUrlDecode($item, $method)
     {
         if (is_array($item)) {
-            return array_map([$this, 'recursiveUrlDecode'], $item);
+            return array_map(function($value) use ($method) {
+                return $this->recursiveUrlDecode($value, $method);
+            }, $item);
         } elseif (is_string($item)) {
-            // Замена '+' на '%2B' перед декодированием
-            $item = str_replace('+', '%2B', $item);
-            return urldecode($item);
+            if ($method === 'GET') {
+                // Замена '+' на '%2B' перед декодированием
+                $item = str_replace('+', '%2B', $item);
+                return urldecode($item);
+            }
+
+            return $item;
         }
         return $item;
     }

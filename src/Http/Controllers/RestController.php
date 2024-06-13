@@ -162,7 +162,7 @@ abstract class RestController extends Controller
 
             $this->setPerPage($request->get('perPage'));
             $this->setSoftDeletes();
-            $this->queryBuild = $request->recursiveUrlDecode($request->getQuery());
+            $this->queryBuild = $request->recursiveUrlDecode($request->getQuery(), $request->method());
 
             $this->modelQuery = $this->modelName::query();
             $this->modelQuery->select($this->withTableAlias('*'));

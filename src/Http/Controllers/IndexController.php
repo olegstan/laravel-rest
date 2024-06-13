@@ -130,6 +130,12 @@ class IndexController extends Controller
         {
             $string = $data->_method;
         }
+        
+        //если мы из запроса хотим изменить метод контроллера
+        if(isset($data->data) && isset($data->data->_method))
+        {
+            $string = $data->data->_method;
+        }
 
 		return camel_case(strtolower($string) . ucfirst($action));
 	}

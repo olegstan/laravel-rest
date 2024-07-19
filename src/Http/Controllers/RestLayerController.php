@@ -103,7 +103,7 @@ abstract class RestLayerController extends RestController
      * @return mixed
      * @throws \Throwable
      */
-    public function deleteDestroy(int $id, StartRequest $request)
+    public function deleteDestroy($id, StartRequest $request)
     {
         return DB::transaction(function () use ($id, $request){
             $this->queryCondition($request);

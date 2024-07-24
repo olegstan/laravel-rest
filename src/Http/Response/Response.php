@@ -2,10 +2,7 @@
 
 namespace LaravelRest\Http\Response;
 
-use App\Api\V1\Transformers\Base\CreditLogTransformer;
-use App\Models\CreditLog;
 use Illuminate\Http\Response as IlluminateResponse;
-use Illuminate\Support\Collection;
 use LaravelRest\Http\Transformers\BaseTransformer;
 
 

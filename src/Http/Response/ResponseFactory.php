@@ -76,7 +76,6 @@ class ResponseFactory
         if (!empty($text)) {
             $response->addMeta('text', $text);
         }
-        $response->morph();
         return $response;
     }
 
@@ -102,7 +101,6 @@ class ResponseFactory
                 $response->addMeta('context', $context);
             }
         }
-        $response->morph();
 
         return $response;
     }

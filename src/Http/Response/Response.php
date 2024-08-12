@@ -36,10 +36,6 @@ class Response extends IlluminateResponse
      * @var
      */
     protected $transformData;
-    /**
-     * @var
-     */
-    protected $transformLogsData;
 
     /**
      * Response constructor.

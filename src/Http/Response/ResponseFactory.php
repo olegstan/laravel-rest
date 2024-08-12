@@ -67,6 +67,17 @@ class ResponseFactory
     }
 
     /**
+     * @param $filePath
+     * @param $fileName
+     * @param array $headers
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    public function download($filePath, $fileName, array $headers = [])
+    {
+        return \Illuminate\Support\Facades\Response::download($filePath, $fileName, $headers);
+    }
+
+    /**
      * @param string $text
      * @return Response
      */

@@ -84,6 +84,21 @@ class Response extends IlluminateResponse
      */
     public function morph()
     {
+        $this->prepareTransformData();
+
+        $arr['meta'] = [];
+        $arr['result'] = $this->result;
+        $arr['data'] = is_array($this->transformData) ? $this->transformData : $this->transformData->toArray();
+        $this->setMeta($arr);
+        $this->content = json_encode($arr);
+        return $this;
+    }
+
+    /**
+     *
+     */
+    public function prepareTransformData()
+    {
         switch ($this->type)
         {
             case 'paginator':
@@ -159,12 +174,6 @@ class Response extends IlluminateResponse
                 }
                 break;
         }
-        $arr['meta'] = [];
-        $arr['result'] = $this->result;
-        $arr['data'] = is_array($this->transformData) ? $this->transformData : $this->transformData->toArray();
-        $this->setMeta($arr);
-        $this->content = json_encode($arr);
-        return $this;
     }
 
     /**

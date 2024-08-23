@@ -84,6 +84,7 @@ class ResponseFactory
     public function success($text = '')
     {
         $response = $this->createResponse([], 200);
+        $response->success();
         if (!empty($text)) {
             $response->addMeta('text', $text);
         }
@@ -100,6 +101,7 @@ class ResponseFactory
     public function error($errors = null, $code = 422, $context = '', array $data = [])
     {
         $response = $this->createResponse([], $code);
+        $response->error($code);
         if ($errors) {
             if (is_array($errors) || is_object($errors)) {
                 $response->addMeta('errors', $errors);

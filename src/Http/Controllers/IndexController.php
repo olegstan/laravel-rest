@@ -65,6 +65,8 @@ class IndexController extends Controller
 
         $controllers = $this->getControllers($role);
 
+        $controllerName = null;
+
         foreach ($controllers as $namespace) {
             $controllerClass = $namespace . '\\' . $this->getTarget($target);
             if (class_exists($controllerClass)) {

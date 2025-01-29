@@ -6,9 +6,9 @@ use LaravelRest\Http\Requests\RequestInterface;
 use LaravelRest\Http\Requests\StartRequest;
 use Exception;
 use LaravelRest\Http\Response\ResponseTrait;
-use ReflectionException;
 use ReflectionMethod;
 use Auth;
+use Str;
 use Request;
 use Session;
 
@@ -30,6 +30,27 @@ class IndexController extends Controller
     public static $action = null;
 
     /**
+     * @param $role
+     * @return array|array[]|string[]|\string[][]
+     */
+    public function getControllers($role)
+    {
+        $baseControllers = array_merge(
+            [
+                'App\\Api\\V1\\Controllers\\' . ucfirst($role),
+                'App\\Api\\V1\\Controllers\\Common'
+            ],
+        );
+
+        $customControllers = array_map(
+            fn($path) => str_replace('{role}', ucfirst($role), $path),
+            config('rest.controllers', [])
+        );
+
+        return array_merge($baseControllers, $customControllers);
+    }
+
+    /**
      * @param $target
      * @param $method
      * @param StartRequest $request
@@ -42,18 +63,22 @@ class IndexController extends Controller
         self::$action = $action;
         $role = Auth::getRole();
 
-        $controllerNameRole = 'App\\Api\\V1\\Controllers\\' . ucfirst($role) . '\\' . $this->getTarget($target);
-        $controllerName = $controllerNameRole;
-        if(!class_exists($controllerName))
+        $controllers = $this->getControllers($role);
+
+        foreach ($controllers as $namespace) {
+            $controllerClass = $namespace . '\\' . $this->getTarget($target);
+            if (class_exists($controllerClass)) {
+                $controllerName = $controllerClass;
+                break;
+            }
+        }
+
+        if(!$controllerName)
         {
-			$controllerName = 'App\\Api\\V1\\Controllers\\Common\\' . $this->getTarget($target);
-			if(!class_exists($controllerName))
-			{
-				return $this->response()->error('Урл не найден', 404, 'Not found controller ' . $controllerName . ($role ? ' и ' . $controllerNameRole : ''), [
-				    'controller' => $controllerName
-                ]);
-			}
-		}else{
+            return $this->response()->error('Урл не найден', 404, 'Not found controller', [
+                'controllers' => $controllers
+            ]);
+        }else{
             $request->routeController = $controllerName;
         }
 
@@ -137,7 +162,7 @@ class IndexController extends Controller
             $string = $data->data->_method;
         }
 
-		return camel_case(strtolower($string) . ucfirst($action));
+		return Str::camel(strtolower($string) . ucfirst($action));
 	}
 
     /**
@@ -152,13 +177,13 @@ class IndexController extends Controller
 			foreach($arr as $key => $val)
 			{
 				if($key < count($arr) - 1){
-					$str .= ucfirst(camel_case($val)) . '\\';
+					$str .= ucfirst(Str::camel($val)) . '\\';
 				}
 			}
-			$str .= ucfirst(camel_case($arr[count($arr)-1])) . 'Controller';
+			$str .= ucfirst(Str::camel($arr[count($arr)-1])) . 'Controller';
 			return $str;
 		}else{
-			return ucfirst(camel_case($target)) . 'Controller';
+			return ucfirst(Str::camel($target)) . 'Controller';
 		}
 	}
 }

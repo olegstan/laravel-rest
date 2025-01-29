@@ -294,19 +294,15 @@ abstract class RestController extends Controller
             case 'whereHas':
                 $this->prepareWhereHas($j, $subQuery);
                 return;
-                break;
             case 'whereHasMorph':
                 $this->prepareWhereHasMorph($j, $subQuery);
                 return;
-                break;
             case 'whereDoesntHave':
                 $this->prepareWhereDoesntHave($j, $subQuery);
                 return;
-                break;
             case 'whereAbs':
                 $this->prepareWhereAbs($j, $subQuery);
                 return;
-                break;
             case 'with':
                 $args = $this->prepareWith($subQuery);
                 break;

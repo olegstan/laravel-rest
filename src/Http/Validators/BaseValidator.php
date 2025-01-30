@@ -282,6 +282,14 @@ class BaseValidator
     }
 
     /**
+     * @return string
+     */
+    public function errorMessage()
+    {
+       return '';
+    }
+
+    /**
      *
      */
     public function validate()

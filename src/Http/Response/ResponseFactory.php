@@ -98,14 +98,14 @@ class ResponseFactory
      * @param array $data
      * @return Response
      */
-    public function error($errors = null, $code = 422, $context = '', array $data = [])
+    public function error($errors = null, $code = 422, $context = 'Не удалось сохранить данные', array $data = [])
     {
         $response = $this->createResponse([], $code);
         $response->error($code);
         if ($errors) {
             if (is_array($errors) || is_object($errors)) {
                 $response->addMeta('errors', $errors);
-                $response->addMeta('message', 'Не удалось сохранить данные');
+                $response->addMeta('message', $context);
             } elseif (is_string($errors)) {
                 $response->addMeta('text', $errors);
             }

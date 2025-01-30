@@ -4,6 +4,7 @@ namespace LaravelRest\Http\Validators;
 
 use Auth;
 use LaravelRest\Http\Controllers\IndexController;
+use LaravelRest\Http\Requests\RequestInterface;
 use Request;
 
 trait ValidatorAble
@@ -11,22 +12,25 @@ trait ValidatorAble
     public static $namespaceValidators = 'App\Api\V1\Requests\\';
 
     /**
-     * @param string $t
-     * @return bool
+     * @param string $string
+     * @return false|mixed
      */
-	public function registerValidator($t = '')
+	public function registerValidator($string = '')
     {
         if ($validateClass = $this->getValidateClass())
         {
+            /**
+             * @var RequestInterface $validate;
+             */
             $validate = new $validateClass($this->request);
 
             if ($validate->fails())
             {
-                return $validate->errors();
+                return [$validate->errors(), $validate->errorMessage()];
             }
         }
 
-        return false;
+        return [false, null];
     }
 
     /**

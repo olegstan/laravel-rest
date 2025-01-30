@@ -126,9 +126,13 @@ class IndexController extends Controller
             }
         }
 
-		if($errors = $controller->registerValidator())
+        $errorData = $controller->registerValidator();
+        $errors = $errorData[0];
+        $errorMessage = $errorData[1];
+
+		if($errors)
 		{
-			return $this->response()->error($errors);
+			return $this->response()->error($errors, 422, $errorMessage);
 		}
 
         return call_user_func_array([$controller, $this->getAction($action)], $arguments);

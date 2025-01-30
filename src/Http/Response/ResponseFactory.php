@@ -3,8 +3,8 @@
 namespace LaravelRest\Http\Response;
 
 use Illuminate\Contracts\Pagination\Paginator;
-use Illuminate\Support\Collection;
 use Illuminate\Http\Response;
+use Illuminate\Support\Collection;
 
 /**
  * Class ResponseFactory

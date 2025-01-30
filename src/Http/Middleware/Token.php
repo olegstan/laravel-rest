@@ -2,9 +2,9 @@
 
 namespace LaravelRest\Http\Middleware;
 
-use LaravelRest\Requests\StartRequest;
 use Auth;
 use Closure;
+use LaravelRest\Requests\StartRequest;
 
 class Token
 {

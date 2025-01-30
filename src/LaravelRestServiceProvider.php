@@ -2,11 +2,10 @@
 
 namespace LaravelRest;
 
+use Illuminate\Support\ServiceProvider;
 use LaravelRest\Http\Controllers\IndexController;
-use LaravelRest\Http\Middleware\Token;
 use LaravelRest\Http\Requests\StartRequest;
 use Route;
-use Illuminate\Support\ServiceProvider;
 
 class LaravelRestServiceProvider extends ServiceProvider
 {

@@ -2,13 +2,13 @@
 
 namespace LaravelRest\Http\Controllers;
 
-use LaravelRest\Http\Requests\StartRequest;
-use LaravelRest\Http\Validators\ValidatorAble;
-use LaravelRest\Http\Response\ResponseTrait;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
+use LaravelRest\Http\Requests\StartRequest;
+use LaravelRest\Http\Response\ResponseTrait;
+use LaravelRest\Http\Validators\ValidatorAble;
 
 class Controller extends BaseController
 {

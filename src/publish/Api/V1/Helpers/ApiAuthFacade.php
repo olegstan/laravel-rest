@@ -1,9 +1,9 @@
 <?php
 namespace App\Api\V1\Helpers;
 
+use App\Models\Role;
 use Cache;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Role;
 
 class ApiAuthFacade extends Auth
 {

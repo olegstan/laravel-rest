@@ -2,7 +2,6 @@
 
 namespace App\Api\V1\Controllers\Common;
 
-use Illuminate\Support\Facades\Auth;
 use LaravelRest\Http\Controllers\RestLayerController;
 
 abstract class BaseController extends RestLayerController

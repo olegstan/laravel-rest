@@ -2,15 +2,14 @@
 
 namespace LaravelRest\Http\Controllers;
 
+use DB;
+use Exception;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Http\Request;
 use LaravelRest\Http\Requests\RequestInterface;
 use LaravelRest\Http\Requests\StartRequest;
 use LaravelRest\Http\Validators\ValidatorAble;
-use Illuminate\Database\Eloquent\Model;
-use Carbon\Carbon;
-use DB;
-use Exception;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Http\Request;
 
 /**
  * Class RestController

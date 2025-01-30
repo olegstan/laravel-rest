@@ -2,15 +2,15 @@
 
 namespace LaravelRest\Http\Controllers;
 
+use Auth;
+use Exception;
 use LaravelRest\Http\Requests\RequestInterface;
 use LaravelRest\Http\Requests\StartRequest;
-use Exception;
 use LaravelRest\Http\Response\ResponseTrait;
 use ReflectionMethod;
-use Auth;
-use Str;
 use Request;
 use Session;
+use Str;
 
 /**
  * Class IndexController
@@ -127,8 +127,8 @@ class IndexController extends Controller
         }
 
         $errorData = $controller->registerValidator();
-        $errors = $errorData[0];
-        $errorMessage = $errorData[1];
+        $errors = $errorData[0] ?? false;
+        $errorMessage = $errorData[1] ?? null;
 
 		if($errors)
 		{

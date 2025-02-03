@@ -1,4 +1,5 @@
 <?php
+
 namespace LaravelRest\Http\Requests;
 
 use Illuminate\Http\Request;
@@ -7,6 +8,10 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
  * Class StartRequest
+ *
+ * Custom request-класс, расширяющий функциональность
+ * стандартного Illuminate\Http\Request.
+ *
  * @package LaravelRest\Http\Requests
  */
 class StartRequest extends Request implements RequestInterface
@@ -15,49 +20,16 @@ class StartRequest extends Request implements RequestInterface
      * @var string|null
      */
     public $routeController;
+
     /**
      * @var string|null
      */
     public $routeMethod;
 
-    public function init()
-    {
-        $input = [];
-        if(is_array($this->get('data')))
-        {
-            $input = $this->get('data');
-
-            array_walk_recursive($input, function(&$item)
-            {
-                if(is_string($item))
-                {
-                    $item = trim($item);
-
-                    if($item === '')
-                    {
-                        return null;
-                    }
-
-                    if($item === 'true')
-                    {
-                        return true;
-                    }
-
-                    if($item === 'false')
-                    {
-                        return false;
-                    }
-                }
-
-                return $item;
-            });
-        }
-
-        $this->setCustomData($input);
-    }
-
     /**
-     * @var array
+     * Ключи, которые "принадлежат" исходному Request.
+     *
+     * @var string[]
      */
     public $officialKeys = [
         'arguments',
@@ -65,52 +37,103 @@ class StartRequest extends Request implements RequestInterface
         'data',
         'session',
     ];
+
     /**
-     * @var
+     * Сюда складываем "кастомные" данные,
+     * т.е. всё, что не относится к officialKeys.
+     *
+     * @var ParameterBag
      */
     public $customData;
 
     /**
-     * @param $input
+     * Инициализация объекта.
+     * В частности, очистка входных данных и преобразование
+     * строк 'true'/'false'/' ' и т.д.
+     *
+     * @return void
      */
-    public function setCustomData($input)
+    public function init()
+    {
+        $input = [];
+
+        if (is_array($this->get('data'))) {
+            $input = $this->get('data');
+
+            array_walk_recursive($input, function (&$item) {
+                if (is_string($item)) {
+                    $trimmed = trim($item);
+
+                    // Если после trim строка пустая, делаем null
+                    if ($trimmed === '') {
+                        $item = null;
+                    } elseif ($trimmed === 'true') {
+                        $item = true;
+                    } elseif ($trimmed === 'false') {
+                        $item = false;
+                    } else {
+                        // Если не пустая, записываем обратно в $item
+                        $item = $trimmed;
+                    }
+                }
+            });
+        }
+
+        $this->setCustomData($input);
+    }
+
+    /**
+     * Устанавливаем кастомные данные.
+     *
+     * @param array $input
+     * @return void
+     */
+    public function setCustomData(array $input)
     {
         $this->customData = new ParameterBag($input);
     }
 
     /**
+     * Пробегаемся по всем входным данным и trim'им строки.
      *
+     * @return void
      */
     public function trimInput()
     {
         $input = $this->all();
-        $input = is_array($input) ? $input : [];
 
-        array_walk_recursive($input, function(&$item)
-        {
-            $item = trim($item);
+        array_walk_recursive($input, function (&$item) {
+            if (is_string($item)) {
+                $item = trim($item);
+            }
         });
 
         $this->replace($input);
     }
 
     /**
-     * @param bool $key
+     * Преобразование пустой строки в null
+     * для определённого ключа или, при отсутствии $key,
+     * для всех полей входного массива.
+     *
+     * @param string|null $key
+     * @return void
      */
-    public function transformToNull($key = false)
+    public function transformToNull($key = null)
     {
         $input = $this->all();
-        foreach($input as $k => &$val)
-        {
-            if(!$key){
 
-            }else{
-                if($k === $key){
-                    if($val === '')
-                    {
-                        $val = null;
-                    }
+        // Если $key не задан, преобразуем все пустые строки к null
+        if (is_null($key)) {
+            array_walk_recursive($input, function (&$val) {
+                if ($val === '') {
+                    $val = null;
                 }
+            });
+        } else {
+            // Если передан конкретный ключ
+            if (array_key_exists($key, $input) && $input[$key] === '') {
+                $input[$key] = null;
             }
         }
 
@@ -118,21 +141,26 @@ class StartRequest extends Request implements RequestInterface
     }
 
     /**
-     * @return array|mixed
+     * Преобразуем 'true'/'false' к boolean в arguments.
+     *
+     * @return array
      */
     public function getArguments()
     {
         $arr = $this->get('arguments', []);
-        foreach($arr as &$val)
-        {
-            if($val === 'false' || $val === 'true')
+        foreach ($arr as &$val) {
+            if ($val === 'false' || $val === 'true') {
                 $val = filter_var($val, FILTER_VALIDATE_BOOLEAN);
+            }
         }
+
         return $arr;
     }
 
     /**
-     * @return array|mixed
+     * Получаем query.
+     *
+     * @return array
      */
     public function getQuery()
     {
@@ -140,87 +168,126 @@ class StartRequest extends Request implements RequestInterface
     }
 
     /**
-     * @param $item
-     * @param $method
-     * @return array|array[]|string|string[]
+     * Рекурсивно декодируем url, учитывая особенности GET-запроса.
+     *
+     * @param mixed  $item
+     * @param string $method
+     * @return mixed
      */
     public function recursiveUrlDecode($item, $method)
     {
         if (is_array($item)) {
-            return array_map(function($value) use ($method) {
+            return array_map(function ($value) use ($method) {
                 return $this->recursiveUrlDecode($value, $method);
             }, $item);
-        } elseif (is_string($item)) {
+        }
+
+        if (is_string($item)) {
             if ($method === 'GET') {
-                // Замена '+' на '%2B' перед декодированием
+                // Чтобы + не превратилось в пробел
                 $item = str_replace('+', '%2B', $item);
                 return urldecode($item);
             }
 
             return $item;
         }
+
         return $item;
     }
 
     /**
-     * @param string $key
-     * @param array $default
-     * @return array|mixed
+     * Переопределение метода get(), чтобы для ключей из $officialKeys
+     * использовать родительский Request, а для всех остальных — customData.
+     *
+     * @param string|null $key
+     * @param mixed       $default
+     * @return mixed
      */
     public function get($key, $default = null)
     {
-        if(in_array($key, $this->officialKeys))
-        {
+        // Если запрашиваем "официальные" ключи, берём из родительского Request
+        if (in_array($key, $this->officialKeys, true)) {
             return parent::get($key, $default);
         }
 
-        if($this->customData)
-        {
-            return !is_null($this->customData->get($key, null)) ? $this->customData->get($key) : $default;
+        // Иначе смотрим в customData
+        if ($this->customData) {
+            $value = $this->customData->get($key, null);
+            return $value !== null ? $value : $default;
         }
 
         return $default;
     }
 
     /**
-     * @param string $key
-     * @param array $default
-     * @return array|mixed
+     * Аналогично Laravel-методу input(), возвращает
+     * значение ключа с учётом "дот-нотации".
+     *
+     * @param string|null $key
+     * @param mixed       $default
+     * @return mixed
      */
     public function input($key = null, $default = null)
     {
+        // Если ключ не задан, вернём все данные (аналог all())
+        if ($key === null) {
+            return $this->get(null, $default);
+        }
+
+        // Если ключ содержит точки, ищем вложенные элементы в массиве
+        if (str_contains($key, '.')) {
+            $keys  = explode('.', $key);
+            // Первый уровень забираем через наш кастомный get()
+            $value = $this->get(array_shift($keys), $default);
+
+            // Проходим дальше по остальным уровням
+            foreach ($keys as $subKey) {
+                if (is_array($value) && array_key_exists($subKey, $value)) {
+                    $value = $value[$subKey];
+                } else {
+                    return $default;
+                }
+            }
+
+            return $value;
+        }
+
+        // Обычное поведение
         return $this->get($key, $default);
     }
 
     /**
-     * @param array|string $key
+     * Проверка наличия ключа либо в официальных ключах,
+     * либо в customData.
+     *
+     * @param string|array $key
      * @return bool
      */
     public function has($key)
     {
-        if(in_array($key, $this->officialKeys))
+        if (in_array($key, $this->officialKeys, true)) {
             return parent::has($key);
+        }
 
-
-        if($this->customData)
-            return $this->customData->has($key);
-
-        return false;
+        return $this->customData && $this->customData->has($key);
     }
 
     /**
-     * @param null $keys
+     * Возвращает все кастомные данные, либо только перечисленные ключи.
+     *
+     * @param array|string|null $keys
      * @return array
      */
     public function all($keys = null)
     {
-        if($this->customData)
-            return $this->customData->all($keys);
-
-        return [];
+        return $this->customData
+            ? $this->customData->all($keys)
+            : [];
     }
 
     /**
+     * Сливает новый массив с текущими customData.
+     *
      * @param array $params
      * @return bool
      */
@@ -229,13 +296,14 @@ class StartRequest extends Request implements RequestInterface
         foreach ($params as $key => $value) {
             $this->customData->set($key, $value);
         }
-
         return true;
     }
 
     /**
-     * @param $keys
-     * @return mixed
+     * Возвращает только перечисленные ключи из всех данных.
+     *
+     * @param array $keys
+     * @return array
      */
     public function only($keys)
     {
@@ -243,7 +311,9 @@ class StartRequest extends Request implements RequestInterface
     }
 
     /**
-     * @return string
+     * Геттер для $routeController.
+     *
+     * @return string|null
      */
     public function getRouteController()
     {
@@ -251,7 +321,9 @@ class StartRequest extends Request implements RequestInterface
     }
 
     /**
-     * @return string
+     * Геттер для $routeMethod.
+     *
+     * @return string|null
      */
     public function getRouteMethod()
     {
@@ -259,7 +331,9 @@ class StartRequest extends Request implements RequestInterface
     }
 
     /**
-     * @return array|string
+     * Получение токена из запроса (пример).
+     *
+     * @return string|null
      */
     public function getApiToken()
     {
@@ -267,8 +341,10 @@ class StartRequest extends Request implements RequestInterface
     }
 
     /**
-     * @param $key
-     * @return mixed
+     * Получаем заголовок из объекта $this->request.
+     *
+     * @param string $key
+     * @return array|string|null
      */
     public function getHeader($key)
     {

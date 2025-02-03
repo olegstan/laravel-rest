@@ -6,6 +6,7 @@ use App\Api\V1\Requests\StartRequest;
 use Illuminate\Support\Facades\Auth;
 use Closure;
 use Illuminate\Support\Facades\Validator;
+use LaravelRest\Http\Requests\RequestInterface;
 
 /**
  * Class BaseValidator
@@ -18,7 +19,7 @@ use Illuminate\Support\Facades\Validator;
 class BaseValidator
 {
     /**
-     * @var StartRequest
+     * @var RequestInterface
      */
     public $request;
 
@@ -76,6 +77,8 @@ class BaseValidator
             }
         };
 
+        //свяжем StartRequest с реквестом валидатора
+        $request->request = $this;
         $this->request = $request;
 
         // Данные, которые хотим "добавить" к текущему request

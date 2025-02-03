@@ -18,8 +18,6 @@ use Illuminate\Support\Facades\Validator;
 class BaseValidator
 {
     /**
-     * Текущий запрос (StartRequest).
-     *
      * @var StartRequest
      */
     public $request;
@@ -67,7 +65,7 @@ class BaseValidator
      *
      * @param  StartRequest  $request
      */
-    public function __construct(StartRequest $request)
+    public function __construct($request)
     {
         $this->prepareInput($request);
         $this->trimInput($request);
@@ -138,10 +136,10 @@ class BaseValidator
      * - Для ключей, перечисленных в $this->prepare['number'],
      *   убираем пробелы и пустые строки превращаем в 0.
      *
-     * @param  StartRequest  $request
+     * @param  $request
      * @return void
      */
-    public function prepareInput(StartRequest $request)
+    public function prepareInput($request)
     {
         $input = $request->all();
         $input = is_array($input) ? $input : [];
@@ -218,10 +216,10 @@ class BaseValidator
      * Trim всех строковых значений во входном массиве,
      * пустые строки заменяются на null.
      *
-     * @param  StartRequest  $request
+     * @param  $request
      * @return void
      */
-    public function trimInput(StartRequest $request)
+    public function trimInput($request)
     {
         $input = $request->all();
         $input = is_array($input) ? $input : [];

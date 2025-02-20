@@ -78,7 +78,8 @@ class BaseValidator
         };
 
         //свяжем StartRequest с реквестом валидатора
-        $request->request = $this;
+        //TODO нужно будет решить
+//        $request->request = $this;//если вернуть связку, то не работает getArguments
         $this->request = $request;
 
         // Данные, которые хотим "добавить" к текущему request

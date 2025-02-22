@@ -12,12 +12,13 @@
     "scripts": {
         "test": "php vendor/bin/phpunit tests"
     },
-    "version": "1.1.54",
+    "version": "dev-main",
     "homepage": "https://github.com/olegstan/laravel-rest",
     "require": {
         "php": ">=7.4.0"
     },
     "require-dev": {
+        "laravel/laravel": "8.0",
         "phpunit/phpunit": "^9.6",
         "phpunit/php-code-coverage": "^9.2.13"
     },

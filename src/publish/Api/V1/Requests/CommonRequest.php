@@ -2,9 +2,9 @@
 
 namespace App\Api\V1\Requests;
 
-use LaravelRest\Http\Validators\BaseValidator;
+use LaravelRest\Http\Requests\BaseFormRequest;
 
-class CommonRequest extends BaseValidator
+class CommonRequest extends BaseFormRequest
 {
 
 }

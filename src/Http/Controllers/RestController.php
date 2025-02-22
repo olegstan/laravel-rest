@@ -2,14 +2,10 @@
 
 namespace LaravelRest\Http\Controllers;
 
-use DB;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Http\Request;
-use LaravelRest\Http\Requests\RequestInterface;
-use LaravelRest\Http\Requests\StartRequest;
-use LaravelRest\Http\Validators\ValidatorAble;
+use LaravelRest\Http\Requests\DefaultRequest;
 
 /**
  * Class RestController
@@ -17,16 +13,10 @@ use LaravelRest\Http\Validators\ValidatorAble;
  */
 abstract class RestController extends Controller
 {
-    use ValidatorAble;
-
     /**
      * @var bool
      */
     public $debug = false;
-    /**
-     * @var bool|null
-     */
-    public $sofDelete = null;
     /**
      * @var Model
      */
@@ -86,14 +76,6 @@ abstract class RestController extends Controller
     /**
      * @var array
      */
-    public $validators = [];
-    /**
-     * @var array
-     */
-    public $defaultValidators = [];
-    /**
-     * @var array
-     */
     public $disabledMethods = [];
     /**
      * @var array
@@ -138,10 +120,8 @@ abstract class RestController extends Controller
 
     /**
      * RestController constructor.
-     * @param RequestInterface|StartRequest $request
-     * @throws Exception
      */
-    public function __construct(RequestInterface $request)
+    public function __construct($request)
     {
         if ($request->input('debug')) {
             $this->debug = true;
@@ -160,7 +140,6 @@ abstract class RestController extends Controller
             $this->model = new $this->modelName;
 
             $this->setPerPage($request->get('perPage'));
-            $this->setSoftDeletes();
             $this->queryBuild = $request->recursiveUrlDecode($request->getQuery(), $request->method());
 
             $this->modelQuery = $this->modelName::query();
@@ -169,7 +148,6 @@ abstract class RestController extends Controller
             if ($this->modelTableAlias) {
                 $this->modelQuery->from($this->model->getTable() . ' AS ' . $this->modelTableAlias);
             }
-            $this->softDeleteCondition($request);
             $this->defaultOrderBy($request);
         }
     }
@@ -202,20 +180,6 @@ abstract class RestController extends Controller
         }
 
         $this->perPage = $perPage;
-
-        return $this;
-    }
-
-    /**
-     * @return $this
-     */
-    public function setSoftDeletes()
-    {
-        if (is_null($this->sofDelete)) {
-            $this->sofDelete = in_array('deleted_at', $this->model->getFillable());
-        } else {
-            $this->sofDelete = false;
-        }
 
         return $this;
     }
@@ -515,24 +479,6 @@ abstract class RestController extends Controller
         }
     }
 
-    /**
-     * @param Request $request
-     */
-    public function softDeleteCondition(Request $request)
-    {
-        if (!$this->sofDelete) {
-            return;
-        }
-
-        if (!$request->has('deleted') || $request->get('deleted') === 'false') {
-            $this->modelQuery->whereNull($this->withTableAlias('deleted_at'));
-        } else {
-            $this->modelQuery->whereNotNull($this->withTableAlias('deleted_at'));
-            if (!$this->modelTableAlias) {
-                $this->modelQuery->withoutGlobalScope(SoftDeletingScope::class);
-            }
-        }
-    }
 
     /**
      * @param string $fieldName

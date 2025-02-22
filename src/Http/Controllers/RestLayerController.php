@@ -3,11 +3,12 @@
 namespace LaravelRest\Http\Controllers;
 
 use Carbon\Carbon;
-use DB;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\DB;
 use Exception;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use LaravelRest\Http\Requests\RequestInterface;
-use LaravelRest\Http\Requests\StartRequest;
 use LaravelRest\Http\Response\Response;
 
 /**
@@ -16,128 +17,23 @@ use LaravelRest\Http\Response\Response;
  */
 abstract class RestLayerController extends RestController
 {
-
     /**
      * @param $request
-     * @return mixed
-     * @throws \Throwable
+     * @return \Illuminate\Http\Response
      */
-    public function postStore($request)
-    {
-        return DB::transaction(function () use ($request)
-        {
-            $item = call_user_func([$this->modelName, 'create'], $request->only($this->onlyFieldsCreate));
-            if ($item) {
-                return $this->response()->json($item->toArray())->addMeta('text', 'Запись создана')->addMeta('id', $item->id);
-            }
-            return $this->response()->error('Не удалось создать запись');
-        }, config('app.transaction_tries'));
-    }
-
-    /**
-     * @param $id
-     * @param $request
-     * @return Response
-     */
-    public function putActive($id, $request)
+    public function getIndex($request)
     {
         $this->queryCondition($request);
-        /**
-         * @var BaseModel $item
-         */
-        $item = $this->modelQuery->where('id', '=', $id)->firstOrFail();
-        $item->fieldSwitch('is_active');
-        return $this->response()->success();
+        $this->indexCallback($request);
+        return $this->responseIndex($request->get('paginateType'));
     }
 
     /**
-     * @param $id
-     * @param $request
-     * @return Response
-     */
-    public function deleteRestore($id, $request)
-    {
-        $this->modelQuery = $this->modelName::query();
-        $this->queryCondition($request);
-        $item = $this->modelQuery->where('id', '=', $id)->whereNotNull('deleted_at')->withoutGlobalScope(SoftDeletingScope::class)->firstOrFail();
-        $item->update(['deleted_at' => null]);
-        return $this->response()->success('Запись успешно восстановлена');
-    }
-
-    /**
-     * @param $id
-     * @param $request
-     * @return Response|mixed
-     * @throws \Throwable
-     */
-    public function putUpdate($id, $request)
-    {
-        return DB::transaction(function () use ($id, $request){
-            $this->queryCondition($request);
-            $this->updateCallback($request);
-            $item = $this->modelQuery->where('id', '=', $id)->first(); // firstOrError?
-
-            if ($item && $item->update($request->only($this->onlyFieldsUpdate))) {
-                return $this->response()->success('Запись обновлена');
-            }
-
-            return $this->response()->error('Не удалось обновить запись');
-        }, config('app.transaction_tries'));
-    }
-
-    /**
-     * @param RequestInterface $request
-     * @return void
-     */
-    public function updateCallback($request)
-    {
-
-    }
-
-    /**
-     * @param int $id
-     * @param StartRequest $request
-     * @return mixed
-     * @throws \Throwable
-     */
-    public function deleteDestroy($id, StartRequest $request)
-    {
-        return DB::transaction(function () use ($id, $request){
-            $this->queryCondition($request);
-            $this->destroyCallback($id, $request);
-            $item = $this->modelQuery->where('id', '=', $id)->first();
-
-            if ($this->sofDelete) {
-                if ($item && $item->update(['deleted_at' => Carbon::now()])) {
-                    return $this->response()->success('Запись успешно удалена');
-                }
-            } else {
-                if ($item && $item->delete()) {
-                    return $this->response()->success('Запись успешно удалена');
-                }
-            }
-
-            return $this->response()->error('Не удалось удалить запись');
-        }, config('app.transaction_tries'));
-    }
-
-    /**
-     * @param $id
-     * @param RequestInterface $request
-     * @return mixed
-     */
-
-    public function destroyCallback($id, $request)
-    {
-
-    }
-
-    /**
+     * @param null $action
      * @return string
      */
-    public function getMessageSuccess($action = null)
+    protected function getMessageSuccess($action = null)
     {
-
         switch ($this->getActionName()) {
             case 'store':
                 return 'Запись создана';
@@ -149,9 +45,9 @@ abstract class RestLayerController extends RestController
     }
 
     /**
-     * @return mixed|string
+     * @return string
      */
-    public function getActionName()
+    protected function getActionName()
     {
         return $this->actionName;
     }
@@ -159,7 +55,7 @@ abstract class RestLayerController extends RestController
     /**
      * @return string
      */
-    public function getMessageError()
+    protected function getMessageError()
     {
         switch ($this->getActionName()) {
             case 'store':
@@ -171,31 +67,18 @@ abstract class RestLayerController extends RestController
         }
     }
 
-
     /**
-     * @param RequestInterface $request
-     * @return Response
-     * @throws Exception
+     * @param $request
      */
-    public function getIndex($request)
+    protected function queryCondition($request)
     {
-        $this->queryCondition($request);
-        $this->indexCallback($request);
-        return $this->responseIndex($request->get('paginateType'));
+
     }
 
     /**
      * @param $request
      */
-    public function queryCondition($request)
-    {
-
-    }
-
-    /**
-     * @param RequestInterface $request
-     */
-    public function indexCallback($request)
+    protected function indexCallback($request)
     {
 
     }
@@ -204,7 +87,7 @@ abstract class RestLayerController extends RestController
      * @param $paginate
      * @return \Illuminate\Http\Response
      */
-    public function responseIndex($paginate)
+    protected function responseIndex($paginate)
     {
         if($this->modelName)
         {

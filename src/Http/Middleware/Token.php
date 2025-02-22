@@ -4,23 +4,18 @@ namespace LaravelRest\Http\Middleware;
 
 use Auth;
 use Closure;
-use LaravelRest\Requests\StartRequest;
 
 class Token
 {
     /**
-     * Handle an incoming request.
-     *
-     * @param  StartRequest $request
-     * @param  \Closure  $next
-     * @param  string|null  $guard
-     * @return mixed
-     *
-     * TODO User
+     * @param $request
+     * @param Closure $next
+     * @param null $guard
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response|mixed
      */
     public function handle($request, Closure $next, $guard = null)
     {
-        $token = method_exists($request,'getApiToken') ? $request->getApiToken() : $request->get('api_token');
+        $token = $request->get('api_token');
 
         if(empty($token))
         {
@@ -29,7 +24,7 @@ class Token
 
 
         /**
-         * @var StartRequest $request
+         *
          */
         if(!Auth::check() && $token)
         {

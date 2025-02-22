@@ -3,9 +3,10 @@
 namespace LaravelRest;
 
 use Illuminate\Support\ServiceProvider;
-use LaravelRest\Http\Controllers\IndexController;
-use LaravelRest\Http\Requests\StartRequest;
+use LaravelRest\Http\Controllers\RoleRouteController;
+use LaravelRest\Http\Requests\DefaultRequest;
 use Route;
+use Illuminate\Http\Request;
 
 class LaravelRestServiceProvider extends ServiceProvider
 {
@@ -21,15 +22,8 @@ class LaravelRestServiceProvider extends ServiceProvider
             __DIR__ . '/config' => public_path() . '/../config',
         ], 'public');
 
-
-        $url = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
-        if(preg_match('(\/api\/v1\/)', $url) === 1)
-        {
-            $this->app->alias('request', StartRequest::class);
-        }
-
         Route::group(['prefix' => '/api/v1', 'middleware' => config('rest.middlewares')], function () {
-            Route::any('call/{target}/{method}', ['as' => 'api.v1.call', 'uses' => IndexController::class . '@index']);
+            Route::any('call/{target}/{method}', ['as' => 'api.v1.call', 'uses' => RoleRouteController::class . '@index']);
         });
     }
 
@@ -40,7 +34,12 @@ class LaravelRestServiceProvider extends ServiceProvider
      */
     public function register()
     {
-
+        $this->app->bind(DefaultRequest::class, function ($app) {
+            /** @var Request $baseRequest */
+            $baseRequest = $app->make(Request::class);
+            // Создаём наш расширенный Request с данными из базового
+            return DefaultRequest::createFrom($baseRequest);
+        });
     }
 
     /**

@@ -7,6 +7,11 @@ use LaravelRest\Http\Transformers\BaseTransformer;
 
 class PaginatorTransformStrategy implements TransformStrategyInterface
 {
+    /**
+     * @param LengthAwarePaginator $data
+     * @param $transformer
+     * @return mixed
+     */
     public function transform($data, $transformer = null)
     {
         if ($transformer) {

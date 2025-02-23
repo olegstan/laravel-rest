@@ -2,8 +2,8 @@
 
 namespace LaravelRest\Http\Requests;
 
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 use LaravelRest\Http\Requests\Traits\PrepareNumberRequestTrait;
 
 /**
@@ -57,13 +57,29 @@ class BaseFormRequest extends FormRequest
      */
     public function addError($key, $value)
     {
-//        $this->errors[] = [
-//            'key'   => $key,
-//            'value' => $value,
-//        ];
+        $this->errors[] = [
+            'key'   => $key,
+            'value' => $value,
+        ];
     }
 
-
+    /**
+     * @param $validator
+     * @return void
+     */
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator)
+        {
+            if($this->errors)
+            {
+                foreach ($this->errors as $error)
+                {
+                    $validator->errors()->add($error['key'], $error['value']);
+                }
+            }
+        });
+    }
 
     /**
      * Правила валидации (задаётся в потомках).

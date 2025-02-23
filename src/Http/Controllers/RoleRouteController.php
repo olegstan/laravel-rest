@@ -3,16 +3,17 @@
 namespace LaravelRest\Http\Controllers;
 
 use Auth;
+use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Request as RequestHelper;
 use LaravelRest\Http\Requests\DefaultRequest;
 use LaravelRest\Http\Response\ResponseTrait;
 use ReflectionMethod;
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Request as RequestHelper;
-use Illuminate\Contracts\Container\Container;
 use Session;
 use Str;
-use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
 /**
  * Class RoleRouteController

@@ -2,11 +2,16 @@
 namespace LaravelRest\Http\Controllers\DefaultActions;
 
 /**
- * Trait DefaultActionDelete
+ * Trait DefaultActionComposition
  *
  *  @mixin \LaravelRest\Http\Controllers\RestLayerController
+ *  @mixin DefaultActionStore
+ *  @mixin DefaultActionUpdate
+ *  @mixin DefaultActionDelete
  */
 trait DefaultActionComposition
 {
-    use DefaultActionStore, DefaultActionUpdate, DefaultActionDelete;
+    use DefaultActionStore;
+    use DefaultActionUpdate;
+    use DefaultActionDelete;
 }

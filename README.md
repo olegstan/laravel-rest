@@ -64,8 +64,6 @@ The package organizes your Laravel project in a manner conducive to API developm
 
 ### Controllers and Requests
 
-Controllers use the `StartRequestInterface` for handling requests, ensuring a standard approach to request processing across your application.
-
 Example request handling:
 
 ```javascript

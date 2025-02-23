@@ -2,11 +2,11 @@
 
 namespace LaravelRest;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\ServiceProvider;
 use LaravelRest\Http\Controllers\RoleRouteController;
 use LaravelRest\Http\Requests\DefaultRequest;
 use Route;
-use Illuminate\Http\Request;
 
 class LaravelRestServiceProvider extends ServiceProvider
 {

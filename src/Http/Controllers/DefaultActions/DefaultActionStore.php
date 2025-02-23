@@ -10,6 +10,11 @@ use Illuminate\Support\Facades\DB;
  */
 trait DefaultActionStore
 {
+    /**
+     * @param $request
+     * @return \Illuminate\Http\Response|mixed
+     * @throws \Throwable
+     */
     public function postStore($request)
     {
         return DB::transaction(function () use ($request)

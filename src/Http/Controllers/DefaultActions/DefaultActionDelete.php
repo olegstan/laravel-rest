@@ -10,6 +10,11 @@ use Illuminate\Support\Facades\DB;
  */
 trait DefaultActionDelete
 {
+    /**
+     * @param $id
+     * @param $request
+     * @return mixed
+     */
     public function deleteDestroy($id, $request)
     {
         return DB::transaction(function () use ($id, $request){

@@ -2,15 +2,6 @@
 
 namespace LaravelRest\Http\Controllers;
 
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\DB;
-use Exception;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use LaravelRest\Http\Requests\RequestInterface;
-use LaravelRest\Http\Response\Response;
-
 /**
  * Class RestLayerController
  * @package LaravelRest\Http\Controllers
@@ -24,7 +15,6 @@ abstract class RestLayerController extends RestController
     public function getIndex($request)
     {
         $this->queryCondition($request);
-        $this->indexCallback($request);
         return $this->responseIndex($request->get('paginateType'));
     }
 
@@ -55,6 +45,14 @@ abstract class RestLayerController extends RestController
     /**
      * @return string
      */
+    protected function getControllerName()
+    {
+        return $this->controllerName;
+    }
+
+    /**
+     * @return string
+     */
     protected function getMessageError()
     {
         switch ($this->getActionName()) {
@@ -71,14 +69,6 @@ abstract class RestLayerController extends RestController
      * @param $request
      */
     protected function queryCondition($request)
-    {
-
-    }
-
-    /**
-     * @param $request
-     */
-    protected function indexCallback($request)
     {
 
     }

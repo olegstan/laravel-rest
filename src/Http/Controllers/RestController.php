@@ -5,14 +5,17 @@ namespace LaravelRest\Http\Controllers;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use LaravelRest\Http\Requests\DefaultRequest;
+use LaravelRest\Http\Response\ResponseTrait;
 
 /**
  * Class RestController
  * @package LaravelRest\Http\Controllers
+ *
  */
-abstract class RestController extends Controller
+abstract class RestController
 {
+    use ResponseTrait;
+
     /**
      * @var bool
      */

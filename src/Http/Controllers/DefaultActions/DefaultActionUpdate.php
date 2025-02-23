@@ -10,6 +10,12 @@ use Illuminate\Support\Facades\DB;
  */
 trait DefaultActionUpdate
 {
+    /**
+     * @param $id
+     * @param $request
+     * @return \Illuminate\Http\Response|mixed
+     * @throws \Throwable
+     */
     public function putUpdate($id, $request)
     {
         return DB::transaction(function () use ($id, $request){

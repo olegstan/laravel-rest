@@ -84,7 +84,6 @@ class ResponseFactory
     public function success($text = '')
     {
         $response = $this->createResponse([], 200);
-        $response->success();
         if (!empty($text)) {
             $response->addMeta('text', $text);
         }
@@ -99,7 +98,6 @@ class ResponseFactory
     public function error($errorMessage = 'Не удалось сохранить данные', $code = 422)
     {
         $response = $this->createResponse([], $code);
-        $response->error($code);
         $response->addMeta('message', $errorMessage);
 
         return $response;
@@ -115,7 +113,6 @@ class ResponseFactory
     public function validationError($errors = [], $code = 422, $errorMessage = 'Не удалось сохранить данные', array $data = [])
     {
         $response = $this->createResponse([], $code);
-        $response->error($code);
         if ($errors && (is_array($errors) || is_object($errors)))
         {
             $response->addMeta('errors', $errors);

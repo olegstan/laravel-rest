@@ -105,26 +105,23 @@ class Response extends IlluminateResponse
      */
     public function setContent($content): Response
     {
-        // Запомним новые «сырые» данные
         $this->rawContent = $content;
 
-        // Трансформируем (если нужно), результат снова остаётся в $this->rawContent
-        $this->prepareTransformData();
+        return $this;
+    }
 
-        // Собираем итоговый массив для JSON
+    /**
+     * @return string
+     */
+    protected function buildPayload(): string
+    {
+        $this->prepareTransformData();
         $payload = [
-            'meta'   => [],            // будет заполнено ниже
+            'meta'   => $this->meta,
             'result' => $this->result,
             'data'   => $this->formatData($this->rawContent),
         ];
-
-        // Добавляем метаданные (если были)
-        $this->setMeta($payload);
-
-        // Вызываем родительский setContent, чтобы не ломать логику Response
-        parent::setContent(json_encode($payload));
-
-        return $this;
+        return json_encode($payload);
     }
 
     /**
@@ -154,17 +151,6 @@ class Response extends IlluminateResponse
     }
 
     /**
-     * @param $arr
-     */
-    protected function setMeta(&$arr)
-    {
-        foreach ($this->meta as $key => &$val)
-        {
-            $arr['meta'][$key] = $val;
-        }
-    }
-
-    /**
      * Приводит результат трансформации к массиву (если это коллекция или модель)
      * либо оставляет как есть, если это уже массив или скаляр.
      *
@@ -184,5 +170,22 @@ class Response extends IlluminateResponse
         // Если это не массив и не объект со своим toArray(),
         // возвращаем как есть (могут быть строки, числа и т.д.)
         return $data;
+    }
+
+    /**
+     * @return false|string
+     */
+    public function getContent()
+    {
+        return $this->buildPayload();
+    }
+
+    /**
+     * @return Response
+     */
+    public function send()
+    {
+        parent::setContent($this->buildPayload());
+        return parent::send();
     }
 }

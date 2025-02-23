@@ -92,31 +92,39 @@ class ResponseFactory
     }
 
     /**
-     * @param mixed|null $errors
-     * @param int $code
-     * @param string $context
-     * @param array $data
+     * @param $errorMessage
+     * @param $code
      * @return Response
      */
-    public function error($errors = null, $code = 422, $context = 'Не удалось сохранить данные', array $data = [])
+    public function error($errorMessage = 'Не удалось сохранить данные', $code = 422)
     {
         $response = $this->createResponse([], $code);
         $response->error($code);
-        if ($errors) {
-            if (is_array($errors) || is_object($errors)) {
-                $response->addMeta('errors', $errors);
-                $response->addMeta('message', $context);
-            } elseif (is_string($errors)) {
-                $response->addMeta('text', $errors);
-            }
+        $response->addMeta('message', $errorMessage);
 
-            if ($context) {
-                $response->addMeta('context', $context);
-            }
+        return $response;
+    }
+
+    /**
+     * @param $errors
+     * @param $code
+     * @param $errorMessage
+     * @param array $data
+     * @return Response
+     */
+    public function validationError($errors = [], $code = 422, $errorMessage = 'Не удалось сохранить данные', array $data = [])
+    {
+        $response = $this->createResponse([], $code);
+        $response->error($code);
+        if ($errors && (is_array($errors) || is_object($errors)))
+        {
+            $response->addMeta('errors', $errors);
+            $response->addMeta('message', $errorMessage);
         }
 
         return $response;
     }
+
 
     /**
      * Helper method to create a response instance.

@@ -148,7 +148,7 @@ class RoleRouteController extends Controller
                     $validator = $newRequest->getValidatorInstance();
 
                     if ($validator->fails()) {
-                        return $this->response()->error($validator->errors(), 422, $newRequest->errorMessage());
+                        return $this->response()->validationError($validator->errors(), 422, $newRequest->errorMessage());
                     }
 
                     $arguments[] = $newRequest;

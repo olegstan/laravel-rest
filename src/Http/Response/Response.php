@@ -91,6 +91,15 @@ class Response extends IlluminateResponse
     }
 
     /**
+     * @param $payload
+     * @return void
+     */
+    public function parentSetContent($payload)
+    {
+        parent::setContent($payload);
+    }
+
+    /**
      * @param $content
      * @return $this|Response
      */

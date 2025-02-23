@@ -21,5 +21,7 @@ class TransformationStrategyFactory
             case 'item':
                 return new ItemTransformStrategy();
         }
+
+        return null;
     }
 }

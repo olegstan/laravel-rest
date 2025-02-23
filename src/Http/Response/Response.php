@@ -126,8 +126,11 @@ class Response extends IlluminateResponse
         // Используем фабрику, чтобы получить нужную стратегию по типу
         $strategy = TransformationStrategyFactory::make($this->type);
 
-        // Применяем стратегию к текущим данным
-        $this->transformData = $strategy->transform($this->transformData, $this->transformer);
+        if($strategy)
+        {
+            // Применяем стратегию к текущим данным
+            $this->transformData = $strategy->transform($this->transformData, $this->transformer);
+        }
     }
 
     /**

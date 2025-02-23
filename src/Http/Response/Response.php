@@ -64,13 +64,15 @@ class Response extends IlluminateResponse
         // чтобы сразу не записывать "сырые" данные в $this->content
         parent::__construct('', $status, $headers);
 
+        if ($status >= 400 && $status <= 599) {
+            $this->result = 'error';
+        } else {
+            $this->result = 'success'; // Опционально: если нужно обозначить успешный статус
+        }
+
         $this->transformer = $transformer;
         $this->type        = $type;
         $this->rawContent  = $content;
-
-        // Сразу выставим (трансформируем) контент в нужный формат
-        // через наш метод setContent, чтобы всё было централизовано
-        $this->setContent($this->rawContent);
     }
 
     /**
@@ -88,26 +90,6 @@ class Response extends IlluminateResponse
     {
         $this->setStatusCode($code);
         $this->result = 'error';
-    }
-
-    /**
-     * @param $payload
-     * @return void
-     */
-    public function parentSetContent($payload)
-    {
-        parent::setContent($payload);
-    }
-
-    /**
-     * @param $content
-     * @return $this|Response
-     */
-    public function setContent($content): Response
-    {
-        $this->rawContent = $content;
-
-        return $this;
     }
 
     /**
@@ -135,7 +117,7 @@ class Response extends IlluminateResponse
         if($strategy)
         {
             // Применяем стратегию к текущим данным
-            $this->transformData = $strategy->transform($this->transformData, $this->transformer);
+            $this->rawContent  = $strategy->transform($this->rawContent, $this->transformer);
         }
     }
 

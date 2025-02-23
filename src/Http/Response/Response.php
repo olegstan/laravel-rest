@@ -51,14 +51,14 @@ class Response extends IlluminateResponse
      * @param int                  $status      HTTP-статус
      * @param array                $headers     HTTP-заголовки
      * @param BaseTransformer|null $transformer Пользовательский трансформер
-     * @param string               $type        Тип трансформации (json, collect, paginator...)
+     * @param               $type        Тип трансформации (json, collect, paginator...)
      */
     public function __construct(
         $content,
         int $status = 200,
         array $headers = [],
         ?BaseTransformer $transformer = null,
-        string $type = 'json'
+        $type = 'json'
     ) {
         // Передаём в родительский конструктор (Response) пустую строку,
         // чтобы сразу не записывать "сырые" данные в $this->content

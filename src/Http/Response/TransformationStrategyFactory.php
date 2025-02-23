@@ -9,7 +9,7 @@ use LaravelRest\Http\Response\Strategies\TransformStrategyInterface;
 
 class TransformationStrategyFactory
 {
-    public static function make(string $type)
+    public static function make($type = null)
     {
         switch ($type) {
             case 'paginator':

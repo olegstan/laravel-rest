@@ -93,12 +93,18 @@ class ResponseFactory
     /**
      * @param $errorMessage
      * @param $code
+     * @param array $data
      * @return Response
      */
-    public function error($errorMessage = 'Не удалось сохранить данные', $code = 422)
+    public function error($errorMessage = 'Не удалось сохранить данные', $code = 422, array $data = [])
     {
         $response = $this->createResponse([], $code);
         $response->addMeta('message', $errorMessage);
+
+        if($data)
+        {
+            $response->addMeta('data', $data);
+        }
 
         return $response;
     }
@@ -117,6 +123,11 @@ class ResponseFactory
         {
             $response->addMeta('errors', $errors);
             $response->addMeta('message', $errorMessage);
+        }
+
+        if($data)
+        {
+            $response->addMeta('data', $data);
         }
 
         return $response;

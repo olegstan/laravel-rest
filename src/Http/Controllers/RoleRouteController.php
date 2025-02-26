@@ -77,8 +77,8 @@ class RoleRouteController extends Controller
             return $this->response()->error(
                 'Урл не найден',
                 404,
-                'Not found controller',
                 [
+                    'text' => 'Not found controller',
                     'controllers' => $controllers
                 ]
             );
@@ -90,8 +90,8 @@ class RoleRouteController extends Controller
             return $this->response()->error(
                 'Урл не найден',
                 404,
-                'In controller ' . $controllerName . ' not found method ' . $this->getAction($action),
                 [
+                    'text' => 'In controller ' . $controllerName . ' not found method ' . $this->getAction($action),
                     'controller' => $controllerName,
                     'action'     => $action
                 ]

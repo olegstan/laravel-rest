@@ -18,6 +18,7 @@ trait TrimRequestTrait
         //data.user_id, data.sum, реквест съедает это
         $input = $this->input('data', []);
 
+
         if(is_array($input))
         {
             //уберем данные не относящиеся к форме
@@ -41,6 +42,9 @@ trait TrimRequestTrait
                 }
             });
         }
+
+        $this->query->remove('timestamp');
+        $this->query->remove('unique_hash');
 
         $this->replace($input);
     }

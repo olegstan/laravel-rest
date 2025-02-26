@@ -18,6 +18,14 @@ class CollectTransformStrategy implements TransformStrategyInterface
             if ($transformer) {
                 return $transformer->transform($value);
             }
+
+            if(method_exists($value, 'getTransformer'))
+            {
+                $transformerModel = $value->getTransformer();
+
+                return (new $transformerModel)->transform($value);
+            }
+
             // Если кастомный трансформер не передан:
             $transformerModel = BaseTransformer::getTransformClass(
                 BaseTransformer::getClass($value, BaseTransformer::getPrefix($value))

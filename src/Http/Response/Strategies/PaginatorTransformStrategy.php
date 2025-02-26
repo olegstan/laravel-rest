@@ -20,6 +20,14 @@ class PaginatorTransformStrategy implements TransformStrategyInterface
             });
         } else {
             $data->getCollection()->transform(function ($value) {
+
+                if(method_exists($value, 'getTransformer'))
+                {
+                    $transformerModel = $value->getTransformer();
+
+                    return (new $transformerModel)->transform($value);
+                }
+
                 // Если кастомный трансформер не передан,
                 // пытаемся найти подходящий трансформер через BaseTransformer
                 $transformerModel = BaseTransformer::getTransformClass(

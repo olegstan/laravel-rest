@@ -7,25 +7,32 @@ use LaravelRest\Http\Transformers\BaseTransformer;
 class ItemTransformStrategy implements TransformStrategyInterface
 {
     /**
-     * @param $data
+     * @param $item
      * @param $transformer
      * @return array|mixed
      */
-    public function transform($data, $transformer = null)
+    public function transform($item, $transformer = null)
     {
-        if(!$data)
+        if(!$item)
         {
             return [];
         }
 
         if ($transformer) {
-            return $transformer->transform($data);
+            return $transformer->transform($item);
+        }
+
+        if(method_exists($item, 'getTransformer'))
+        {
+            $transformerModel = $item->getTransformer();
+
+            return (new $transformerModel)->transform($item);
         }
 
         // Если кастомный трансформер не передан
         $transformerModel = BaseTransformer::getTransformClass(
-            BaseTransformer::getClass($data, BaseTransformer::getPrefix($data))
+            BaseTransformer::getClass($item, BaseTransformer::getPrefix($item))
         );
-        return (new $transformerModel)->transform($data);
+        return (new $transformerModel)->transform($item);
     }
 }

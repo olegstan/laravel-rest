@@ -3,7 +3,7 @@
 namespace LaravelRest\Http\Controllers;
 
 use Auth;
-use Illuminate\Contracts\Container\Container;
+use Illuminate\Container\Container;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
@@ -62,6 +62,7 @@ class RoleRouteController extends Controller
         $role = Auth::getRole();
 
         $controllers = $this->getControllers($role);
+        $controllersPaths = [];
 
         $controllerName = null;
 
@@ -69,7 +70,10 @@ class RoleRouteController extends Controller
             $controllerClass = $namespace . '\\' . $this->getTarget($target);
             if (class_exists($controllerClass)) {
                 $controllerName = $controllerClass;
+                $controllersPaths = [];//очистим чтобы не хранить уже не нужную переменную
                 break;
+            }else{
+                $controllersPaths[] = $controllerClass;
             }
         }
 
@@ -79,7 +83,7 @@ class RoleRouteController extends Controller
                 404,
                 [
                     'text' => 'Not found controller',
-                    'controllers' => $controllers
+                    'controllers' => $controllersPaths
                 ]
             );
         } else {
@@ -112,6 +116,7 @@ class RoleRouteController extends Controller
 
         $refMethod = new ReflectionMethod($controller, $this->getAction($action));
         $params    = $refMethod->getParameters();
+        $container = app(Container::class);
 
         // *** Начинаем проход по параметрам метода, чтобы подставить нужные объекты
         for ($i = count($arguments); $i < $refMethod->getNumberOfParameters(); $i++) {
@@ -131,27 +136,35 @@ class RoleRouteController extends Controller
                 $paramClass = $paramType->getName();
 
                 // *** Проверяем, что этот класс - реализация/наследник нашего FormRequest
-                if (class_exists($paramClass) && is_subclass_of($paramClass, FormRequest::class)) {
+                if (class_exists($paramClass))
+                {
+                    if(is_subclass_of($paramClass, FormRequest::class))
+                    {
+                        // Создаём экземпляр FormRequest, передавая туда запросные данные
+                        /**
+                         * @var FormRequest $newRequest
+                         */
+                        $newRequest = $paramClass::createFrom($request);
+                        $newRequest->setContainer($container);
+                        $newRequest->prepareForValidation();
 
-                    // Создаём экземпляр FormRequest, передавая туда запросные данные
-                    /**
-                     * @var FormRequest $newRequest
-                     */
-                    $newRequest = $paramClass::createFrom($request);
-                    $newRequest->setContainer(app(Container::class));
-                    $newRequest->prepareForValidation();
+                        // Запускаем валидацию
+                        /**
+                         * @var Validator $validator
+                         */
+                        $validator = $newRequest->getValidatorInstance();
 
-                    // Запускаем валидацию
-                    /**
-                     * @var Validator $validator
-                     */
-                    $validator = $newRequest->getValidatorInstance();
+                        if ($validator->fails()) {
+                            return $this->response()->validationError($validator->errors(), 422, $newRequest->errorMessage());
+                        }
 
-                    if ($validator->fails()) {
-                        return $this->response()->validationError($validator->errors(), 422, $newRequest->errorMessage());
+
+                        $arguments[] = $newRequest;
+                        continue;
                     }
 
-                    $arguments[] = $newRequest;
+                    $resolvedDependency = $container->make($paramClass);
+                    $arguments[] = $resolvedDependency;
                     continue;
                 }
             }
@@ -177,9 +190,10 @@ class RoleRouteController extends Controller
      * @param $action
      * @return string
      */
-	public function getAction($action)
+    public function getAction($action)
     {
         $string = RequestHelper::method();
+
         //ищем замену метода
         if(isset($_REQUEST['_method']))
         {
@@ -196,35 +210,35 @@ class RoleRouteController extends Controller
         {
             $string = $data->_method;
         }
-        
+
         //если мы из запроса хотим изменить метод контроллера
         if(isset($data->data) && isset($data->data->_method))
         {
             $string = $data->data->_method;
         }
 
-		return Str::camel(strtolower($string) . ucfirst($action));
-	}
+        return Str::camel(strtolower($string) . ucfirst($action));
+    }
 
     /**
      * @param $target
      * @return string
      */
-	public function getTarget($target)
+    public function getTarget($target)
     {
-		if(strpos($target, '.') !== false){
-			$str = '';
-			$arr = explode('.', $target);
-			foreach($arr as $key => $val)
-			{
-				if($key < count($arr) - 1){
-					$str .= ucfirst(Str::camel($val)) . '\\';
-				}
-			}
-			$str .= ucfirst(Str::camel($arr[count($arr)-1])) . 'Controller';
-			return $str;
-		}else{
-			return ucfirst(Str::camel($target)) . 'Controller';
-		}
-	}
+        if(strpos($target, '.') !== false){
+            $str = '';
+            $arr = explode('.', $target);
+            foreach($arr as $key => $val)
+            {
+                if($key < count($arr) - 1){
+                    $str .= ucfirst(Str::camel($val)) . '\\';
+                }
+            }
+            $str .= ucfirst(Str::camel($arr[count($arr)-1])) . 'Controller';
+            return $str;
+        }else{
+            return ucfirst(Str::camel($target)) . 'Controller';
+        }
+    }
 }

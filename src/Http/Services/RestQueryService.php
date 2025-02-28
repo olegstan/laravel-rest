@@ -67,6 +67,15 @@ class RestQueryService
     ];
 
     /**
+     * @param $builderAvailableMethods
+     * @return void
+     */
+    public function addAvailableMethods($builderAvailableMethods)
+    {
+        $this->builderAvailableMethod = [...$this->builderAvailableMethod, ...$builderAvailableMethods];
+    }
+
+    /**
      * Установить модель, с которой будем работать
      *
      * @param  Model  $model

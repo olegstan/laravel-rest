@@ -101,26 +101,32 @@ abstract class RestController
      */
     protected RestQueryService $restQueryService; // >>> Сервис для работы с запросами
 
+    abstract function getBuilderAvailableMethod();
+
     /**
      * RestController constructor.
      */
     public function __construct($request)
     {
-        $this->restQueryService = new RestQueryService(); // >>> Сохраняем в свойство
 
-        if ($request->input('debug')) {
-            $this->debug = true;
-        }
-
-        if ($request->has('page')) {
-            \Illuminate\Pagination\Paginator::currentPageResolver(function () use ($request) {
-                return $request->get('page');
-            });
-        }
 
         $query = method_exists($request, 'getQuery') ? $request->getQuery() : [];
         // Если задана модель, подготавливаем её для работы
         if ($this->modelName) {
+            $this->restQueryService = new RestQueryService(); // >>> Сохраняем в свойство
+
+            $this->restQueryService->addAvailableMethods($this->getBuilderAvailableMethod());
+
+            if ($request->input('debug')) {
+                $this->debug = true;
+            }
+
+            if ($request->has('page')) {
+                \Illuminate\Pagination\Paginator::currentPageResolver(function () use ($request) {
+                    return $request->get('page');
+                });
+            }
+
             $this->model = new $this->modelName;
 
             // Устанавливаем кол-во записей на странице

@@ -165,11 +165,11 @@ class RestQueryService
      * Общий метод, который вызывает необходимые методы Query Builder
      * (whereHas, with, orderBy и т.д.)
      *
-     * @param  Builder  $builder
+     * @param  $builder
      * @param  array    $subQuery
      * @throws Exception
      */
-    protected function commonPrepareQuery(Builder $builder, array &$subQuery): void
+    protected function commonPrepareQuery($builder, array &$subQuery): void
     {
         $key  = key($subQuery);
         $args = $subQuery[$key];

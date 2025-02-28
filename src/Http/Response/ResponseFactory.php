@@ -67,6 +67,16 @@ class ResponseFactory
     }
 
     /**
+     * @param array $data
+     * @param array $headers
+     * @return Response
+     */
+    public function msgpack(array $data, array $headers = [])
+    {
+        return $this->createResponse($data, 200, $headers, null, 'msgpack');
+    }
+
+    /**
      * @param $filePath
      * @param $fileName
      * @param array $headers

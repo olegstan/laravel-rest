@@ -118,7 +118,6 @@ abstract class RestController
             });
         }
 
-
         $query = method_exists($request, 'getQuery') ? $request->getQuery() : [];
         // Если задана модель, подготавливаем её для работы
         if ($this->modelName) {

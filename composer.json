@@ -18,9 +18,10 @@
         "php": ">=7.4.0"
     },
     "require-dev": {
-        "laravel/laravel": "8.0",
+        "laravel/framework": "^8.0",
+        "phpunit/php-code-coverage": "^9.2.13",
         "phpunit/phpunit": "^9.6",
-        "phpunit/php-code-coverage": "^9.2.13"
+        "rybakit/msgpack": "^0.9.1"
     },
     "autoload": {
         "psr-4": {
@@ -43,5 +44,6 @@
     "suggest": {
 
     },
-    "minimum-stability": "stable"
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }

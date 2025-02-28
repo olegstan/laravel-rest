@@ -4,6 +4,7 @@ namespace LaravelRest\Http\Response;
 
 use Illuminate\Http\Response as IlluminateResponse;
 use LaravelRest\Http\Transformers\BaseTransformer;
+use MessagePack\Packer;
 
 
 /**
@@ -58,7 +59,7 @@ class Response extends IlluminateResponse
         int $status = 200,
         array $headers = [],
         ?BaseTransformer $transformer = null,
-        $type = 'json'
+        $type = 'json'//msgpack
     ) {
         // Передаём в родительский конструктор (Response) пустую строку,
         // чтобы сразу не записывать "сырые" данные в $this->content
@@ -73,6 +74,12 @@ class Response extends IlluminateResponse
         $this->transformer = $transformer;
         $this->type        = $type;
         $this->rawContent  = $content;
+
+        if ($type === 'msgpack') {
+            $this->headers->set('Content-Type', 'application/msgpack');
+        } else {
+            $this->headers->set('Content-Type', 'application/json');
+        }
     }
 
     /**
@@ -103,7 +110,23 @@ class Response extends IlluminateResponse
             'result' => $this->result,
             'data'   => $this->formatData($this->rawContent),
         ];
+
+        if ($this->type === 'msgpack') {
+            return $this->encodeMessagePack($payload);
+        }
+
+
         return json_encode($payload);
+    }
+
+    /**
+     * @param array $data
+     * @return mixed
+     */
+    protected function encodeMessagePack(array $data)
+    {
+        $packer = new Packer();
+        return $packer->pack($data);
     }
 
     /**

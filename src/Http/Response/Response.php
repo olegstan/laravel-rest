@@ -100,9 +100,9 @@ class Response extends IlluminateResponse
     }
 
     /**
-     * @return string
+     * @return array
      */
-    protected function buildPayload(): string
+    protected function buildPayload()
     {
         $this->prepareTransformData();
         $payload = [
@@ -111,10 +111,14 @@ class Response extends IlluminateResponse
             'data'   => $this->formatData($this->rawContent),
         ];
 
+        return $payload;
+    }
+
+    public function convertResponse($payload)
+    {
         if ($this->type === 'msgpack') {
             return $this->encodeMessagePack($payload);
         }
-
 
         return json_encode($payload);
     }
@@ -182,7 +186,7 @@ class Response extends IlluminateResponse
      */
     public function getContent()
     {
-        return $this->buildPayload();
+        return $this->convertResponse($this->buildPayload());
     }
 
     /**
@@ -190,7 +194,7 @@ class Response extends IlluminateResponse
      */
     public function send()
     {
-        parent::setContent($this->buildPayload());
+        parent::setContent($this->convertResponse($this->buildPayload()));
         return parent::send();
     }
 }

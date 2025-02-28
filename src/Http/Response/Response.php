@@ -46,6 +46,14 @@ class Response extends IlluminateResponse
      * @var BaseTransformer|null
      */
     protected $transformer;
+    /**
+     * @var null
+     */
+    protected $payload = null;
+    /**
+     * @var bool
+     */
+    protected $isPayloadBuild = false;
 
     /**
      * @param mixed                $content     Исходные (сырые) данные
@@ -104,14 +112,20 @@ class Response extends IlluminateResponse
      */
     protected function buildPayload()
     {
-        $this->prepareTransformData();
-        $payload = [
-            'meta'   => $this->meta,
-            'result' => $this->result,
-            'data'   => $this->formatData($this->rawContent),
-        ];
+        if(!$this->isPayloadBuild)
+        {
+            $this->isPayloadBuild = true;
 
-        return $payload;
+            $transfomedData = $this->prepareTransformData();
+
+            $this->payload = [
+                'meta'   => $this->meta,
+                'result' => $this->result,
+                'data'   => $this->formatData($transfomedData),
+            ];
+        }
+
+        return $this->payload;
     }
 
     public function convertResponse($payload)
@@ -144,7 +158,7 @@ class Response extends IlluminateResponse
         if($strategy)
         {
             // Применяем стратегию к текущим данным
-            $this->rawContent  = $strategy->transform($this->rawContent, $this->transformer);
+            return $strategy->transform($this->rawContent, $this->transformer);
         }
     }
 

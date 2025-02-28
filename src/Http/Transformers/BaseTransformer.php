@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use League\Fractal\TransformerAbstract;
+use Carbon\Carbon;
 
 class BaseTransformer extends TransformerAbstract
 {
@@ -39,9 +40,17 @@ class BaseTransformer extends TransformerAbstract
     public function transformDate($model, $field)
     {
         $row = [];
-        $row[$field] = $model->{$field};
-        $row[$field . '_date'] = $model->{$field} ? $model->{$field}->format('d.m.Y') : '';
-        $row[$field . '_datetime'] = $model->{$field} ? $model->{$field}->format('d.m.Y H:i:s') : '';
+
+        if ($model->{$field} instanceof Carbon) {
+            $row[$field] = $model->{$field}->format('Y-m-d H:i:s');
+            $row[$field . '_date'] = $model->{$field}->format('d.m.Y');
+            $row[$field . '_datetime'] = $model->{$field}->format('d.m.Y H:i:s');
+        } else {
+            // Если не Carbon, возвращаем пустые значения
+            $row[$field] = null;
+            $row[$field . '_date'] = '';
+            $row[$field . '_datetime'] = '';
+        }
 
         return $row;
     }

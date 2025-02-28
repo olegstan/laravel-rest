@@ -101,7 +101,10 @@ abstract class RestController
      */
     protected RestQueryService $restQueryService; // >>> Сервис для работы с запросами
 
-    abstract function getBuilderAvailableMethod();
+    public function getBuilderAvailableMethod()
+    {
+        return [];
+    }
 
     /**
      * RestController constructor.

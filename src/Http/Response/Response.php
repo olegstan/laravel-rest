@@ -148,7 +148,7 @@ class Response extends IlluminateResponse
     }
 
     /**
-     * @return void
+     * @return array|\Illuminate\Pagination\LengthAwarePaginator|mixed
      */
     public function prepareTransformData()
     {
@@ -160,6 +160,8 @@ class Response extends IlluminateResponse
             // Применяем стратегию к текущим данным
             return $strategy->transform($this->rawContent, $this->transformer);
         }
+
+        return [];
     }
 
     /**

@@ -375,7 +375,8 @@ class RestQueryService
     /**
      * Подготовка аргументов для where, orWhere, etc., когда внутри есть 'query' => [...subQueries...]
      *
-     * @param  array  $args
+     * @param array $args
+     * @throws Exception
      */
     protected function prepareBase(array &$args): void
     {
@@ -407,8 +408,9 @@ class RestQueryService
     /**
      * Групповая обёртка для всех where/или where*
      *
-     * @param  Builder  $builder
-     * @param  array    $arr
+     * @param Builder $builder
+     * @param array $arr
+     * @throws Exception
      */
     protected function prepareWhere(Builder $builder, array $arr): void
     {

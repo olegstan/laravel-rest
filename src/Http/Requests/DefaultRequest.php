@@ -25,21 +25,21 @@ class DefaultRequest extends Request implements RequestInterface
 
     /**
      * @param Request $request
-     * @param null $to
+     * @param $to
      * @return Request|DefaultRequest
      */
     public static function createFrom(Request $request, $to = null)
     {
-        $request = parent::createFrom($request);
+        $newRequest = parent::createFrom($request);
 
         //до очистки и переопределения данных запишем arguments и query в отдельные массивы
-        $request->arguments = $request->get('arguments', []);
+        $newRequest->arguments = $request->get('arguments', []);
 
-        $request->buildQuery = $request->get('query', []);
+        $newRequest->buildQuery = $request->get('query', []);
 
-        $request->trimInput();
+        $newRequest->trimInput();
 
-        return $request;
+        return $newRequest;
     }
 
     /**
@@ -57,7 +57,7 @@ class DefaultRequest extends Request implements RequestInterface
      */
     public function getArguments()
     {
-        return $this->get('arguments', []);
+        return $this->arguments;
     }
 
     /**
@@ -65,7 +65,7 @@ class DefaultRequest extends Request implements RequestInterface
      */
     public function getQuery()
     {
-        return $this->get('query', []);
+        return $this->buildQuery;
     }
 
     /**

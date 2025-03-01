@@ -14,6 +14,7 @@ trait DefaultActionDelete
      * @param $id
      * @param $request
      * @return mixed
+     * @throws \Throwable
      */
     public function deleteDestroy($id, $request)
     {

@@ -5,6 +5,7 @@ namespace LaravelRest\Http\Response;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Response as FacadeResponse;
 
 /**
  * Class ResponseFactory
@@ -12,17 +13,6 @@ use Illuminate\Support\Collection;
  */
 class ResponseFactory
 {
-    /**
-     * @param Collection $collection
-     * @param callable|null $transformer
-     * @param array $headers
-     * @return Response
-     */
-    public function collectOptimize(Collection $collection, $transformer = null, array $headers = [])
-    {
-        return $this->createResponse($collection, 200, $headers, $transformer, 'collectOptimize');
-    }
-
     /**
      * @param Collection $collection
      * @param callable|null $transformer
@@ -84,7 +74,7 @@ class ResponseFactory
      */
     public function download($filePath, $fileName, array $headers = [])
     {
-        return \Illuminate\Support\Facades\Response::download($filePath, $fileName, $headers);
+        return FacadeResponse::download($filePath, $fileName, $headers);
     }
 
     /**

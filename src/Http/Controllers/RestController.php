@@ -19,7 +19,7 @@ abstract class RestController
     /**
      * @var bool
      */
-    public $debug = false;
+    public bool $debug = false;
 
     /**
      * @var Model
@@ -108,6 +108,7 @@ abstract class RestController
 
     /**
      * RestController constructor.
+     * @throws Exception
      */
     public function __construct($request)
     {

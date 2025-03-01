@@ -2,11 +2,12 @@
 
 namespace LaravelRest\Http\Controllers;
 
-use Auth;
 use Illuminate\Container\Container;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request as RequestHelper;
 use LaravelRest\Http\Requests\DefaultRequest;
 use LaravelRest\Http\Response\ResponseTrait;
@@ -26,7 +27,7 @@ class RoleRouteController extends Controller
     /**
      * @var string[]
      */
-    public static $pathsToControllers = [
+    public static array $pathsToControllers = [
         'App\\Api\\V1\\Controllers\\{role}',
         'App\\Api\\V1\\Controllers\\Common'
     ];
@@ -56,6 +57,8 @@ class RoleRouteController extends Controller
      * @param $action
      * @return false|\Illuminate\Http\Response|mixed
      * @throws \ReflectionException
+     * @throws BindingResolutionException
+     * @throws \Exception
      */
     public function index(DefaultRequest $request, $target, $action)
     {

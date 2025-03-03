@@ -33,9 +33,9 @@ class DefaultRequest extends Request implements RequestInterface
         $newRequest = parent::createFrom($request);
 
         //до очистки и переопределения данных запишем arguments и query в отдельные массивы
-        $newRequest->arguments = $request->get('arguments', []);
+        $newRequest->arguments = $request->get('arguments', []);//TODO если слишком большой GET запрос то данные могут попасть в POST
 
-        $newRequest->buildQuery = $request->get('query', []);
+        $newRequest->buildQuery = $request->get('query', []);//TODO если слишком большой GET запрос то данные могут попасть в POST
 
         $newRequest->trimInput();
 

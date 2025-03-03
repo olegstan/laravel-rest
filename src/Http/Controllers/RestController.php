@@ -125,14 +125,14 @@ abstract class RestController
 
             if ($request->has('page')) {
                 \Illuminate\Pagination\Paginator::currentPageResolver(function () use ($request) {
-                    return $request->get('page');
+                    return $request->input('page');
                 });
             }
 
             $this->model = new $this->modelName;
 
             // Устанавливаем кол-во записей на странице
-            $this->setPerPage($request->get('perPage'));
+            $this->setPerPage($request->input('perPage'));
 
             // Считываем query-параметры (ваш метод recursiveUrlDecode может быть где-то в helper)
             $this->queryBuild = $request->recursiveUrlDecode($request->getQuery(), $request->method());

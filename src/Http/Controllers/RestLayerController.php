@@ -15,7 +15,7 @@ abstract class RestLayerController extends RestController
     public function getIndex($request)
     {
         $this->queryCondition($request);
-        return $this->responseIndex($request->get('paginateType'));
+        return $this->responseIndex($request->input('paginateType'));
     }
 
     /**

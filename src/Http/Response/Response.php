@@ -3,6 +3,7 @@
 namespace LaravelRest\Http\Response;
 
 use Illuminate\Http\Response as IlluminateResponse;
+use LaravelRest\Http\Services\Msgpack\Extensions\CarbonExtension;
 use LaravelRest\Http\Transformers\BaseTransformer;
 use MessagePack\Packer;
 
@@ -149,7 +150,12 @@ class Response extends IlluminateResponse
      */
     protected function encodeMessagePack(array $data)
     {
+        /**
+         * @var Packer $packer
+         */
         $packer = new Packer();
+        $packer->registerExtension(new CarbonExtension());
+
         return $packer->pack($data);
     }
 

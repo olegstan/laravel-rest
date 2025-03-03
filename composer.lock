@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "57068e2fadba872983a477c544b444a5",
+    "content-hash": "8ea59e685bb8ee1b09b35fa244476f95",
     "packages": [],
     "packages-dev": [
         {
@@ -2797,16 +2797,16 @@
         },
         {
             "name": "rybakit/msgpack",
-            "version": "v0.9.1",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rybakit/msgpack.php.git",
-                "reference": "fc6bc45e92274e78c32d0a86f2e2cc1f8b5e017b"
+                "reference": "8e44ae093272d33019f378d697446e6af883f831"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rybakit/msgpack.php/zipball/fc6bc45e92274e78c32d0a86f2e2cc1f8b5e017b",
-                "reference": "fc6bc45e92274e78c32d0a86f2e2cc1f8b5e017b",
+                "url": "https://api.github.com/repos/rybakit/msgpack.php/zipball/8e44ae093272d33019f378d697446e6af883f831",
+                "reference": "8e44ae093272d33019f378d697446e6af883f831",
                 "shasum": ""
             },
             "require": {
@@ -2822,6 +2822,7 @@
                 "ext-decimal": "For converting overflowed integers to Decimal objects",
                 "ext-gmp": "For converting overflowed integers to GMP objects"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -2847,7 +2848,7 @@
             ],
             "support": {
                 "issues": "https://github.com/rybakit/msgpack.php/issues",
-                "source": "https://github.com/rybakit/msgpack.php/tree/v0.9.1"
+                "source": "https://github.com/rybakit/msgpack.php/tree/master"
             },
             "funding": [
                 {
@@ -2855,7 +2856,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-02-16T00:48:07+00:00"
+            "time": "2023-06-18T20:24:36+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -6316,11 +6317,13 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "rybakit/msgpack": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=7.4.0"
+        "php": ">=8.0.30"
     },
     "platform-dev": [],
     "plugin-api-version": "2.3.0"

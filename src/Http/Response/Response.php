@@ -136,7 +136,7 @@ class Response extends IlluminateResponse
 
     public function convertResponse($payload)
     {
-        if ($this->type === 'msgpack') {
+        if ($this->format === 'msgpack') {
             return $this->encodeMessagePack($payload);
         }
 

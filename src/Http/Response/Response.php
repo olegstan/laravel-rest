@@ -6,7 +6,6 @@ use Illuminate\Http\Response as IlluminateResponse;
 use LaravelRest\Http\Transformers\BaseTransformer;
 use MessagePack\Packer;
 
-
 /**
  * Class Response
  * @package LaravelRest\Http\Response
@@ -31,6 +30,10 @@ class Response extends IlluminateResponse
      * @var string
      */
     protected $type;
+    /**
+     * @var string
+     */
+    protected $format;
 
     /**
      * Сырой контент, который надо трансформировать.
@@ -60,14 +63,16 @@ class Response extends IlluminateResponse
      * @param int                  $status      HTTP-статус
      * @param array                $headers     HTTP-заголовки
      * @param BaseTransformer|null $transformer Пользовательский трансформер
-     * @param               $type        Тип трансформации (json, collect, paginator...)
+     * @param                      $type
+     * @param                      $format
      */
     public function __construct(
         $content,
         int $status = 200,
         array $headers = [],
         ?BaseTransformer $transformer = null,
-        $type = 'json'//msgpack
+        $type = null,
+        $format = 'json'//msgpack
     ) {
         // Передаём в родительский конструктор (Response) пустую строку,
         // чтобы сразу не записывать "сырые" данные в $this->content
@@ -82,8 +87,9 @@ class Response extends IlluminateResponse
         $this->transformer = $transformer;
         $this->type        = $type;
         $this->rawContent  = $content;
+        $this->format  = $format;
 
-        if ($type === 'msgpack') {
+        if ($format === 'msgpack') {
             $this->headers->set('Content-Type', 'application/msgpack');
         } else {
             $this->headers->set('Content-Type', 'application/json');
@@ -161,7 +167,7 @@ class Response extends IlluminateResponse
             return $strategy->transform($this->rawContent, $this->transformer);
         }
 
-        return [];
+        return $this->rawContent;
     }
 
     /**

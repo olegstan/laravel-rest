@@ -53,7 +53,7 @@ class ResponseFactory
      */
     public function json(array $data, array $headers = [])
     {
-        return $this->createResponse($data, 200, $headers);
+        return $this->createResponse($data, 200, $headers, null, null, 'json');
     }
 
     /**
@@ -63,7 +63,7 @@ class ResponseFactory
      */
     public function msgpack(array $data, array $headers = [])
     {
-        return $this->createResponse($data, 200, $headers, null, 'msgpack');
+        return $this->createResponse($data, 200, $headers, null, null, 'msgpack');
     }
 
     /**
@@ -78,7 +78,7 @@ class ResponseFactory
     }
 
     /**
-     * @param string $text
+     * @param $text
      * @return Response
      */
     public function success($text = '')
@@ -144,11 +144,11 @@ class ResponseFactory
      * @param string|null $method
      * @return Response
      */
-    private function createResponse($data, $status = 200, array $headers = [], $transformer = null, $method = null)
+    private function createResponse($data, $status = 200, array $headers = [], $transformer = null, $method = null, $format = 'json')
     {
         $responseClass = config('rest.response');
         try {
-            return new $responseClass($data, $status, $headers, $transformer, $method);
+            return new $responseClass($data, $status, $headers, $transformer, $method, $format);
         } catch (\Exception $e) {
             // Handle the exception (e.g., log it, rethrow it, etc.)
             throw new \RuntimeException('Failed to create response instance.', 0, $e);

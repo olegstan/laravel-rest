@@ -154,7 +154,7 @@ class Response extends IlluminateResponse
          * @var Packer $packer
          */
         $packer = new Packer();
-        $packer->registerExtension(new CarbonExtension());
+        $packer = $packer->extendWith(new CarbonExtension(0));
 
         return $packer->pack($data);
     }

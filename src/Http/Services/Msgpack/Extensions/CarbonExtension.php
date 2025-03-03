@@ -9,7 +9,18 @@ use MessagePack\Packer;
 
 class CarbonExtension implements Extension
 {
-    private $type = 42;
+    private $type;
+
+    public function __construct(int $type)
+    {
+        if ($type < 0 || $type > 127) {
+            throw new \OutOfRangeException(
+                "Extension type is expected to be between 0 and 127, $type given"
+            );
+        }
+
+        $this->type = $type;
+    }
 
     public function getType() : int
     {

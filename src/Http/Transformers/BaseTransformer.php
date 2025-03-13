@@ -156,6 +156,11 @@ class BaseTransformer extends TransformerAbstract
      */
     public static function getPrefix($value)
     {
+        if(Str::is('CommonCatalog\Models*', get_class($value)))
+        {
+            return 'CommonCatalog\Models\\';
+        }
+
         if(Str::is('Common\Models*', get_class($value)))
         {
             return 'Common\Models\\';
@@ -192,6 +197,15 @@ class BaseTransformer extends TransformerAbstract
         if(isset(BaseTransformer::$found[$name]))
         {
             return BaseTransformer::$found[$name];
+        }
+
+        $str = 'CommonCatalog\\Transformers\\' . $name . 'Transformer';
+
+        if(class_exists($str))
+        {
+            BaseTransformer::$found[$name] = $str;
+
+            return $str;
         }
 
         $str = 'Common\\Transformers\\' . $name . 'Transformer';

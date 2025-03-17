@@ -23,6 +23,51 @@ class BaseFormRequest extends FormRequest
     public $errors = [];
 
     /**
+     * @var array
+     */
+    public array $arguments = [];
+
+    /**
+     * @var array
+     */
+    public array $buildQuery = [];
+
+    /**
+     * @param BaseFormRequest|\Illuminate\Http\Request $from
+     * @param $to
+     * @return \Illuminate\Http\Request|BaseFormRequest|DefaultRequest
+     */
+    public static function createFrom(self|\Illuminate\Http\Request $from, $to = null)
+    {
+        $request = parent::createFrom($from, $to);
+
+        if($from instanceof DefaultRequest)
+        {
+            //прокинем аргументы и запрос, чтобы можно было их использовать в валидации
+            $request->buildQuery = $from->buildQuery;
+            $request->arguments = $from->arguments;
+        }
+
+        return $request;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getArguments()
+    {
+        return $this->arguments;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getQuery()
+    {
+        return $this->buildQuery;
+    }
+
+    /**
      *
      */
     public function prepareForValidation()

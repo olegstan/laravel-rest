@@ -93,12 +93,14 @@ class RoleRouteController extends Controller
             $request->routeController = $controllerName;
         }
 
-        if (!method_exists($controllerName, $this->getAction($action))) {
+        $action = $this->getAction($action);
+
+        if (!method_exists($controllerName, $action)) {
             return $this->response()->error(
                 'Урл не найден',
                 404,
                 [
-                    'text' => 'In controller ' . $controllerName . ' not found method ' . $this->getAction($action),
+                    'text' => 'In controller ' . $controllerName . ' not found method ' . $action,
                     'controller' => $controllerName,
                     'action'     => $action
                 ]
@@ -110,14 +112,14 @@ class RoleRouteController extends Controller
          */
         $controller = new $controllerName($request);
 
-        if (property_exists($controller, 'disabledMethods') && in_array($this->getAction($action), $controller->disabledMethods)) {
+        if (property_exists($controller, 'disabledMethods') && in_array($action, $controller->disabledMethods)) {
             return $this->response()->error('Действие недоступно', 403);
         }
 
         // Здесь аргументы, которые приходят из роута (например, /users/1 -> id=1)
         $arguments = $request->getArguments();
 
-        $refMethod = new ReflectionMethod($controller, $this->getAction($action));
+        $refMethod = new ReflectionMethod($controller, $action);
         $params    = $refMethod->getParameters();
         $container = app(Container::class);
 
@@ -186,7 +188,7 @@ class RoleRouteController extends Controller
         }
 
         // Вызываем нужный метод на контроллере, передав собранные аргументы
-        return call_user_func_array([$controller, $this->getAction($action)], $arguments);
+        return call_user_func_array([$controller, $action], $arguments);
     }
 
     /**

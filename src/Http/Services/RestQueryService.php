@@ -245,30 +245,29 @@ class RestQueryService
     {
         $args = [];
         if (isset($withQuery['with'][1]) && isset($withQuery['with'][1]['query'])) {
-            $relation = $withQuery['with'][0];
-            $sub      = $withQuery['with'][1]['query'];
 
-            $args[] = [
-                $relation => function ($q) use ($sub) {
-                    foreach ($sub as &$subQuery) {
-                        $this->commonPrepareQuery($q, $subQuery);
-                    }
+            $query = $withQuery['with'][1]['query'];
+            $args[] = [$withQuery['with'][0] => function ($j) use ($query)
+            {
+                foreach ($query as &$subQuery)
+                {
+                    $this->commonPrepareQuery($j, $subQuery);
                 }
-            ];
+            }];
+
         } else {
             $args[] = $withQuery['with'];
         }
-
         return $args;
     }
 
     /**
      * Обработка whereHas
      *
-     * @param  Builder  $builder
+     * @param  $relation
      * @param  array    $whereHasQuery
      */
-    protected function prepareWhereHas(Builder $builder, array &$whereHasQuery): void
+    protected function prepareWhereHas($builder, array &$whereHasQuery): void
     {
         if (isset($whereHasQuery['whereHas'][1]) && isset($whereHasQuery['whereHas'][1]['query'])) {
             $relation = $whereHasQuery['whereHas'][0];

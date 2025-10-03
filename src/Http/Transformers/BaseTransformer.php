@@ -68,10 +68,11 @@ class BaseTransformer extends TransformerAbstract
     }
 
     /**
-     * @param Model $model
+     * @param $model
+     * @param array $neededKeys
      * @return mixed
      */
-    public function transform($model)
+    public function transform($model, $neededKeys = [])
     {
         $this->registerAttributes($model);
         $arr = [];

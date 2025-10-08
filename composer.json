@@ -21,7 +21,8 @@
         "laravel/framework": "^8.0",
         "phpunit/php-code-coverage": "^9.2.13",
         "phpunit/phpunit": "^9.6",
-        "rybakit/msgpack": "dev-master"
+        "rybakit/msgpack": "dev-master",
+        "mockery/mockery": "^1.5"
     },
     "autoload": {
         "psr-4": {
@@ -29,7 +30,10 @@
         }
     },
     "autoload-dev": {
-
+        "psr-4": {
+            "Tests\\": "tests/",
+            "Tests\\Unit\\": "tests/Unit/"
+        }
     },
     "extra": {
         "laravel": {

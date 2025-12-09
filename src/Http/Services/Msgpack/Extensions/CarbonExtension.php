@@ -3,8 +3,8 @@
 namespace LaravelRest\Http\Services\Msgpack\Extensions;
 
 use Carbon\Carbon;
-use MessagePack\Extension;
 use MessagePack\BufferUnpacker;
+use MessagePack\Extension;
 use MessagePack\Packer;
 
 class CarbonExtension implements Extension

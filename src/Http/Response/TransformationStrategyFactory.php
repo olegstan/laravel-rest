@@ -5,7 +5,6 @@ namespace LaravelRest\Http\Response;
 use LaravelRest\Http\Response\Strategies\CollectTransformStrategy;
 use LaravelRest\Http\Response\Strategies\ItemTransformStrategy;
 use LaravelRest\Http\Response\Strategies\PaginatorTransformStrategy;
-use LaravelRest\Http\Response\Strategies\TransformStrategyInterface;
 
 class TransformationStrategyFactory
 {

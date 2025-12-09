@@ -2,11 +2,11 @@
 namespace LaravelRest\Http\Transformers;
 
 use Auth;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use League\Fractal\TransformerAbstract;
-use Carbon\Carbon;
 
 class BaseTransformer extends TransformerAbstract
 {

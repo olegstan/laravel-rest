@@ -2,7 +2,6 @@
 
 namespace LaravelRest\Http\Response\Strategies;
 
-use Illuminate\Support\Collection;
 use LaravelRest\Http\Transformers\BaseTransformer;
 
 class CollectTransformStrategy implements TransformStrategyInterface

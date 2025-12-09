@@ -11,6 +11,7 @@ namespace LaravelRest\Http\Controllers\DefaultActions;
  */
 trait DefaultActionComposition
 {
+    use DefaultConstructor;
     use DefaultActionStore;
     use DefaultActionUpdate;
     use DefaultActionDelete;

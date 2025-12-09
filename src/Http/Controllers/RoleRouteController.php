@@ -189,8 +189,6 @@ class RoleRouteController extends Controller
             $constructorArgs[] = null;
         }
 
-        die($reflectionClass->newInstanceArgs($constructorArgs));
-
         return $reflectionClass->newInstanceArgs($constructorArgs);
     }
 

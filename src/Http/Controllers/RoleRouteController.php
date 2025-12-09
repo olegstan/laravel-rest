@@ -119,6 +119,11 @@ class RoleRouteController extends Controller
         // Резолвим аргументы для метода действия
         $arguments = $this->resolveMethodArguments($controller, $action, $request);
 
+        //если вернулся респонс вместо аргументов, значит нужно вернуть его, видимо есть ошибка
+        if ($arguments instanceof \Illuminate\Http\Response) {
+            return $arguments;
+        }
+
         // Вызываем метод на контроллере
         return call_user_func_array([$controller, $action], $arguments);
     }
@@ -202,7 +207,7 @@ class RoleRouteController extends Controller
      * @throws \ReflectionException
      * @throws BindingResolutionException
      */
-    private function resolveMethodArguments($controller, string $action, Request $request): array
+    private function resolveMethodArguments($controller, string $action, Request $request)
     {
         // Здесь аргументы, которые приходят из роута (например, /users/1 -> id=1)
         $arguments = $request->getArguments();

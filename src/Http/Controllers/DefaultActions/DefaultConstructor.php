@@ -2,7 +2,6 @@
 namespace LaravelRest\Http\Controllers\DefaultActions;
 
 use LaravelRest\Http\Controllers\RestLayerController;
-use LaravelRest\Http\Services\RestQueryService;
 
 /**
  * Trait DefaultActionUpdate
@@ -18,7 +17,7 @@ trait DefaultConstructor
      */
     public function __construct($request)
     {
-        $this->setRequest($request);
+        $this->setDefaultRequestActionsInBaseControllerConstructor($request);
     }
 
 

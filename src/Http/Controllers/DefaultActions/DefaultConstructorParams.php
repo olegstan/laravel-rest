@@ -18,7 +18,7 @@ trait DefaultConstructorParams
      * @return void
      * @throws \Exception
      */
-    public function setRequest($request): void
+    public function setDefaultRequestActionsInBaseControllerConstructor($request): void
     {
         if (!$request) {
             return;

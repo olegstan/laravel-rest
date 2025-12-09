@@ -109,7 +109,7 @@ abstract class RestController
      * @param null|int $perPage
      * @return $this
      */
-    private function setPerPage($perPage = null)
+    public function setPerPage($perPage = null)
     {
         if (is_null($perPage)) {
             // Если нужно — можно вернуть что-то из сессии или ещё откуда

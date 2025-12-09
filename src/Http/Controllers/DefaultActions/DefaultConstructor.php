@@ -10,7 +10,7 @@ use LaravelRest\Http\Services\RestQueryService;
  */
 trait DefaultConstructor
 {
-    public function __construct($request = null)
+    public function __construct($request)
     {
         if($request)
         {

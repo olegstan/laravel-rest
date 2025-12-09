@@ -146,6 +146,7 @@ class RoleRouteController extends Controller
         $constructorArgs = [];
         $container = app(Container::class);
 
+
         foreach ($params as $param) {
             // Если есть значение по умолчанию
             if ($param->isDefaultValueAvailable()) {
@@ -187,6 +188,8 @@ class RoleRouteController extends Controller
 
             $constructorArgs[] = null;
         }
+
+        die($reflectionClass->newInstanceArgs($constructorArgs));
 
         return $reflectionClass->newInstanceArgs($constructorArgs);
     }

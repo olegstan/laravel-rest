@@ -68,9 +68,9 @@ Example request handling:
 
 ```javascript
 const form = new FormData();
-form.append('user_id', 10);
-form.append('first_name', 'Andrey');
-form.append('last_name', 'Kirov');
+form.append('data[user_id]', 10);
+form.append('data[first_name]', 'Andrey');
+form.append('data[last_name]', 'Kirov');
 
 const requestOptions = {
   method: "POST",

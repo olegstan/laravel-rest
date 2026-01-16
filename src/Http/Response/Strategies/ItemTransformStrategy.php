@@ -29,6 +29,11 @@ class ItemTransformStrategy implements TransformStrategyInterface
             return (new $transformerModel)->transform($item);
         }
 
+        if(method_exists($item, 'getTransformerData'))
+        {
+            return $item->getTransformerData();
+        }
+
         // Если кастомный трансформер не передан
         $transformerModel = BaseTransformer::getTransformClass(
             BaseTransformer::getClass($item, BaseTransformer::getPrefix($item))

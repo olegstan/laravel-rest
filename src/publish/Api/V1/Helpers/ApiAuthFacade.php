@@ -19,7 +19,7 @@ class ApiAuthFacade extends Auth
     {
         if (self::check())
         {
-            return Cache::rememberForever('user_roll_id' . self::user()->id, function ()
+            return Cache::rememberForever('user_roll_id:' . self::user()->id, function ()
             {
                 $roles = Role::all();
                 foreach ($roles as $role)

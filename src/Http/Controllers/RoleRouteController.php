@@ -30,23 +30,29 @@ class RoleRouteController extends Controller
      * @var string[]
      */
     public static array $pathsToControllers = [
-        'App\\Api\\V1\\Controllers\\{role}',
-        'App\\Api\\V1\\Controllers\\Common'
+        'App\\Api\\{version}\\Controllers\\{role}',
+        'App\\Api\\{version}\\Controllers\\Common'
     ];
 
     /**
      * @param $role
+     * @param string $version Версия API из урла (например v1, v2)
      * @return array[]|string[]|\string[][]
      */
-    public function getControllers($role)
+    public function getControllers($role, $version = 'v1')
     {
+        $replace = [
+            '{role}' => ucfirst($role),
+            '{version}' => ucfirst($version),
+        ];
+
         $baseControllers = array_map(
-            fn($path) => str_replace('{role}', ucfirst($role), $path),
+            fn($path) => strtr($path, $replace),
             self::$pathsToControllers
         );
 
         $customControllers = array_map(
-            fn($path) => str_replace('{role}', ucfirst($role), $path),
+            fn($path) => strtr($path, $replace),
             config('rest.controllers', [])
         );
 
@@ -55,6 +61,7 @@ class RoleRouteController extends Controller
 
     /**
      * @param Request $request
+     * @param $version
      * @param $target
      * @param $action
      * @return false|\Illuminate\Http\Response|mixed
@@ -62,11 +69,11 @@ class RoleRouteController extends Controller
      * @throws BindingResolutionException
      * @throws Exception
      */
-    public function index(DefaultRequest $request, $target, $action)
+    public function index(DefaultRequest $request, $version, $target, $action)
     {
         $role = Auth::getRole();
 
-        $controllers = $this->getControllers($role);
+        $controllers = $this->getControllers($role, $version);
         $controllersPaths = [];
 
         $controllerName = null;

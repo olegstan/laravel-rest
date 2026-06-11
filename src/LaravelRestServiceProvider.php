@@ -22,8 +22,9 @@ class LaravelRestServiceProvider extends ServiceProvider
             __DIR__ . '/config' => public_path() . '/../config',
         ], 'public');
 
-        Route::group(['prefix' => '/api/v1', 'middleware' => config('rest.middlewares')], function () {
-            Route::any('call/{target}/{method}', ['as' => 'api.v1.call', 'uses' => RoleRouteController::class . '@index']);
+        Route::group(['prefix' => '/api/{version}', 'middleware' => config('rest.middlewares')], function () {
+            Route::any('call/{target}/{method}', ['as' => 'api.call', 'uses' => RoleRouteController::class . '@index'])
+                ->where('version', 'v[0-9]+');
         });
     }
 

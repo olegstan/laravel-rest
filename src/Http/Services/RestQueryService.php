@@ -290,10 +290,10 @@ class RestQueryService
     /**
      * Обработка whereHasMorph
      *
-     * @param  Builder  $builder
+     * @param  $builder
      * @param  array    $whereHasQuery
      */
-    protected function prepareWhereHasMorph(Builder $builder, array &$whereHasQuery): void
+    protected function prepareWhereHasMorph($builder, array &$whereHasQuery): void
     {
         if (isset($whereHasQuery['whereHasMorph'][1]) && isset($whereHasQuery['whereHasMorph'][1]['query'])) {
             $relation = $whereHasQuery['whereHasMorph'][0];
@@ -314,10 +314,10 @@ class RestQueryService
     /**
      * Обработка whereDoesntHave
      *
-     * @param  Builder  $builder
+     * @param  $builder
      * @param  array    $whereDoesntHaveQuery
      */
-    protected function prepareWhereDoesntHave(Builder $builder, array &$whereDoesntHaveQuery): void
+    protected function prepareWhereDoesntHave($builder, array &$whereDoesntHaveQuery): void
     {
         if (isset($whereDoesntHaveQuery['whereDoesntHave'][1]) && isset($whereDoesntHaveQuery['whereDoesntHave'][1]['query'])) {
             $relation = $whereDoesntHaveQuery['whereDoesntHave'][0];
@@ -338,10 +338,10 @@ class RestQueryService
     /**
      * Обработка whereAbs
      *
-     * @param  Builder  $builder
+     * @param  $builder
      * @param  array    $whereAbsQuery
      */
-    protected function prepareWhereAbs(Builder $builder, array &$whereAbsQuery): void
+    protected function prepareWhereAbs($builder, array &$whereAbsQuery): void
     {
         if (isset($whereAbsQuery['whereAbs'][0]) && isset($whereAbsQuery['whereAbs'][1]) && isset($whereAbsQuery['whereAbs'][2])) {
             // Предполагается, что в модели есть собственный scope whereAbs

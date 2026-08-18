@@ -179,7 +179,7 @@ class RoleRouteController extends Controller
                 }
 
                 // Пытаемся резолвить через контейнер
-                if (class_exists($paramClass)) {
+                if (class_exists($paramClass) || interface_exists($paramClass)) {
                     $constructorArgs[] = $container->make($paramClass);
                     continue;
                 }
@@ -239,7 +239,7 @@ class RoleRouteController extends Controller
             if ($paramType && !$paramType->isBuiltin()) {
                 $paramClass = $paramType->getName();
 
-                if (class_exists($paramClass)) {
+                if (class_exists($paramClass) || interface_exists($paramClass)) {
                     // Если это FormRequest - создаём и валидируем
                     if (is_subclass_of($paramClass, FormRequest::class)) {
                         $validatedRequest = $this->resolveFormRequest($paramClass, $request, $container);

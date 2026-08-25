@@ -135,8 +135,19 @@ class Response extends IlluminateResponse
         return $this->payload;
     }
 
+    /**
+     * Единая точка сериализации ответа.
+     *
+     * Перед кодированием payload чистится от NaN/INF: json_encode на таких
+     * значениях падает, а msgpack молча отдаёт наружу нечисловые float.
+     *
+     * @param array|mixed $payload
+     * @return false|string
+     */
     public function convertResponse($payload)
     {
+        JsonSanitizer::sanitize($payload);
+
         if ($this->format === 'msgpack') {
             return $this->encodeMessagePack($payload);
         }

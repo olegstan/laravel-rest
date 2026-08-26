@@ -60,6 +60,16 @@ class Response extends IlluminateResponse
     protected $isPayloadBuild = false;
 
     /**
+     * Обработчик неудачной сериализации ответа: function (string $error, array $paths).
+     *
+     * Задаётся приложением (например, в сервис-провайдере) — пакет не тянет
+     * за собой ничей логгер и по умолчанию молчит.
+     *
+     * @var callable|null
+     */
+    public static $encodeFailureHandler = null;
+
+    /**
      * @param mixed                $content     Исходные (сырые) данные
      * @param int                  $status      HTTP-статус
      * @param array                $headers     HTTP-заголовки
@@ -152,7 +162,64 @@ class Response extends IlluminateResponse
             return $this->encodeMessagePack($payload);
         }
 
-        return json_encode($payload);
+        return $this->encodeJson($payload);
+    }
+
+    /**
+     * Кодирует payload в JSON, не отдавая наружу пустое тело.
+     *
+     * json_encode на битой UTF-8 строке (её легко привозят импорты брокеров)
+     * возвращает false, Response::setContent(false) приводит его к пустой
+     * строке, и клиент получает 200 с Content-Type: application/json и нулевым
+     * телом — "Unexpected end of JSON input". Поэтому при ошибке кодируем
+     * повторно с заменой некорректных байт и пишем в лог пути до полей,
+     * из-за которых сломалась сериализация.
+     *
+     * @param mixed $payload
+     * @return false|string
+     */
+    protected function encodeJson($payload)
+    {
+        $encoded = json_encode($payload);
+
+        if ($encoded !== false) {
+            return $encoded;
+        }
+
+        $error = json_last_error_msg();
+        $encoded = json_encode($payload, JSON_INVALID_UTF8_SUBSTITUTE | JSON_PARTIAL_OUTPUT_ON_ERROR);
+
+        $this->reportEncodeFailure($error, JsonSanitizer::findInvalidUtf8Paths($payload));
+
+        return $encoded;
+    }
+
+    /**
+     * Отдаёт информацию о неудачной сериализации наружу, приложению.
+     *
+     * Пакет не знает, чем логирует хост-приложение, поэтому сам ничего не
+     * пишет: если обработчик не задан, ошибка просто не репортится.
+     *
+     * @param string $error сообщение json_last_error_msg()
+     * @param array  $paths пути до полей с некорректным UTF-8
+     *
+     * @return void
+     */
+    protected function reportEncodeFailure(string $error, array $paths): void
+    {
+        $handler = static::$encodeFailureHandler;
+
+        if (!is_callable($handler)) {
+            return;
+        }
+
+        // Ответ важнее репорта: падение обработчика не должно превращать
+        // испорченный ответ в 500.
+        try {
+            $handler($error, $paths);
+        } catch (\Throwable $e) {
+            //
+        }
     }
 
     /**

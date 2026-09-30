@@ -91,15 +91,15 @@ class ResponseFactory
     }
 
     /**
-     * @param $errorMessage
+     * @param string|null $errorMessage Текст ошибки; null — текст по умолчанию для статуса $code
      * @param $code
      * @param array $data
      * @return Response
      */
-    public function error($errorMessage = 'Не удалось сохранить данные', $code = 422, array $data = [])
+    public function error($errorMessage = null, $code = 422, array $data = [])
     {
         $response = $this->createResponse([], $code);
-        $response->addMeta('message', $errorMessage);
+        $response->addMeta('message', $errorMessage ?? DefaultErrorMessage::resolve($code));
 
         if($data)
         {
@@ -112,17 +112,17 @@ class ResponseFactory
     /**
      * @param $errors
      * @param $code
-     * @param $errorMessage
+     * @param string|null $errorMessage Текст ошибки; null — текст по умолчанию для статуса $code
      * @param array $data
      * @return Response
      */
-    public function validationError($errors = [], $code = 422, $errorMessage = 'Не удалось сохранить данные', array $data = [])
+    public function validationError($errors = [], $code = 422, $errorMessage = null, array $data = [])
     {
         $response = $this->createResponse([], $code);
         if ($errors && (is_array($errors) || is_object($errors)))
         {
             $response->addMeta('errors', $errors);
-            $response->addMeta('message', $errorMessage);
+            $response->addMeta('message', $errorMessage ?? DefaultErrorMessage::resolve($code));
         }
 
         if($data)

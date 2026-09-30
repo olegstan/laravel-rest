@@ -10,8 +10,8 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Request as RequestHelper;
 use LaravelRest\Http\Requests\DefaultRequest;
+use LaravelRest\Http\Requests\RequestMethod;
 use LaravelRest\Http\Response\ResponseTrait;
 use ReflectionClass;
 use ReflectionException;
@@ -314,30 +314,7 @@ class RoleRouteController extends Controller
      */
     public function getAction($action)
     {
-        $string = RequestHelper::method();
-
-        if(isset($_REQUEST['_method']))
-        {
-            $string = $_REQUEST['_method'];
-        }
-
-        if(isset($_POST['_method']))
-        {
-            $string = $_POST['_method'];
-        }
-
-        $data = json_decode(file_get_contents("php://input"));
-        if(isset($data->_method))
-        {
-            $string = $data->_method;
-        }
-
-        if(isset($data->data) && isset($data->data->_method))
-        {
-            $string = $data->data->_method;
-        }
-
-        return Str::camel(strtolower($string) . ucfirst($action));
+        return Str::camel(strtolower(RequestMethod::resolve()) . ucfirst($action));
     }
 
     /**

@@ -290,15 +290,15 @@ class Response extends IlluminateResponse
     /**
      * @return false|string
      */
-    public function getContent()
+    public function getContent(): string|false
     {
         return $this->convertResponse($this->buildPayload());
     }
 
     /**
-     * @return Response
+     * @return static
      */
-    public function send()
+    public function send(): static
     {
         parent::setContent($this->convertResponse($this->buildPayload()));
         return parent::send();

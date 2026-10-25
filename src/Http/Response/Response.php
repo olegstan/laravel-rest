@@ -296,11 +296,13 @@ class Response extends IlluminateResponse
     }
 
     /**
+     * @param bool $flush Сбросить буферы вывода (параметр появился в Symfony 7).
+     *
      * @return static
      */
-    public function send(): static
+    public function send(bool $flush = true): static
     {
         parent::setContent($this->convertResponse($this->buildPayload()));
-        return parent::send();
+        return parent::send($flush);
     }
 }
